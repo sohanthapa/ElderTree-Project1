@@ -1,0 +1,29 @@
+Pool ID: us-east-2_gGohB7cyT
+Pool ARN: arn:aws:cognito-idp:us-east-2:534900594045:userpool/us-east-2_gGohB7cyT
+
+App lcient id: 5abok4uqvsld57s8ra09dm18kt
+
+
+https://et-test.auth.us-east-2.amazoncognito.com
+
+
+note-id: b72bd390-cf8a-11e9-9ebf-59b5f2daafc3
+
+
+region: us-east-2
+stack: notes-app-api-prod
+resources: 35
+api keys:
+  None
+endpoints:
+  POST - https://mp72qk8yz1.execute-api.us-east-2.amazonaws.com/prod/notes
+  GET - https://mp72qk8yz1.execute-api.us-east-2.amazonaws.com/prod/notes/{id}
+  GET - https://mp72qk8yz1.execute-api.us-east-2.amazonaws.com/prod/notes
+  PUT - https://mp72qk8yz1.execute-api.us-east-2.amazonaws.com/prod/notes/{id}
+  DELETE - https://mp72qk8yz1.execute-api.us-east-2.amazonaws.com/prod/notes/{id}
+
+
+identity pool id: us-east-2:0c522b71-1ce8-4374-820f-f23f5e5c4941
+
+
+npx aws-api-gateway-cli-test --username paugozum1@gmail.com --password Janpaulo1! --user-pool-id us-east-2_gGohB7cyT --app-client-id 5abok4uqvsld57s8ra09dm18kt --cognito-region us-east-2 --identity-pool-id us-east-2:0c522b71-1ce8-4374-820f-f23f5e5c4941 --invoke-url https://mp72qk8yz1.execute-api.us-east-2.amazonaws.com/prod --api-gateway-region us-east-2 --path-template /notes --method POST --body "{\"content\":\"hello world\",\"attachment\":\"hello.jpg\"}"
