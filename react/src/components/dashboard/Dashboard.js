@@ -104,6 +104,9 @@ const useStyles = makeStyles(theme => ({
    },
    fixedHeight: {
       height: 240
+   },
+   button: {
+      margin: theme.spacing(1)
    }
 }));
 
@@ -133,7 +136,7 @@ function createData(name, calories, fat, carbs, protein) {
 const rows = [
    createData(
       'John Snow',
-      'King in the North',
+      'The King in the North',
       80000,
       <div>
          <button>Edit</button>
@@ -142,7 +145,7 @@ const rows = [
    ),
    createData(
       'Arya Stark',
-      'Faceless Woman',
+      'The Faceless Woman',
       75000,
       <div>
          <button>Edit</button>
@@ -160,7 +163,7 @@ const rows = [
    ),
    createData(
       'Sansa Stark',
-      'Queen of WinterFell',
+      'the Queen of WinterFell',
       65000,
       <div>
          <button>Edit</button>
@@ -256,6 +259,14 @@ export default function Dashboard() {
          <main className={classes.content}>
             <div className={classes.appBarSpacer} />
             <Container maxWidth="lg" className={classes.container}>
+               <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.button}
+               >
+                  Add
+               </Button>
+
                <Grid container spacing={3}>
                   {/* Chart */}
                   <Grid item xs={12} md={8} lg={9}>
