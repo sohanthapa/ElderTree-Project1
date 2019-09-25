@@ -18,7 +18,6 @@ import { Link as RouterLink } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { mainListItems, secondaryListItems } from './listItems';
-import Notes from './Notes';
 import Modal from './Modal';
 
 const drawerWidth = 240;
@@ -183,9 +182,7 @@ export default function Dashboard() {
                                  Create New Note
                               </RouterLink>
                            </Button>
-                           <Box>
-                              <Notes />
-                           </Box>
+                           <Box></Box>
                         </Box>
                      </Paper>
                   </Grid>

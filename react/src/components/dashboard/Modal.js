@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
-import LogInButton from './login/LogInButton';
+import LogInButton from '../login/LogInButton';
 
 function rand() {
   return Math.round(Math.random() * 20) - 10;
