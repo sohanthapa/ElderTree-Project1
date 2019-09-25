@@ -2,6 +2,7 @@
 import React, { Component, Fragment } from 'react';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import { Auth } from 'aws-amplify';
 import { withRouter } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Routes from './Routes';
