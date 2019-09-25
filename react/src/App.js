@@ -16,32 +16,32 @@ class App extends Component {
       };
    }
 
-   // async componentDidMount() {
-   //    try {
-   //       await Auth.currentSession();
-   //       this.userHasAuthenticated(true);
-   //    } catch (e) {
-   //       if (e !== 'No current user') {
-   //          alert(e);
-   //       }
-   //    }
+   async componentDidMount() {
+      try {
+//         await Auth.currentSession();
+         this.userHasAuthenticated(true);
+      } catch (e) {
+         if (e !== 'No current user') {
+            alert(e);
+         }
+      }
 
-   //    this.setState({ isAuthenticating: false });
-   // }
+      this.setState({ isAuthenticating: false });
+   }
 
-   // userHasAuthenticated = authenticated => {
-   //    this.setState({ isAuthenticated: authenticated });
-   // };
+   userHasAuthenticated = authenticated => {
+      this.setState({ isAuthenticated: authenticated });
+   };
 
-   // handleLogout = async () => {
-   //    await Auth.signOut();
-   //    this.userHasAuthenticated(false);
+   handleLogout = async () => {
+  //    await Auth.signOut();
+      this.userHasAuthenticated(false);
 
-   //    // eslint-disable-next-line react/destructuring-assignment
-   //    // eslint-disable-next-line react/prop-types
-   //    // eslint-disable-next-line react/destructuring-assignment
-   //    this.props.history.push('/');
-   // };
+      // eslint-disable-next-line react/destructuring-assignment
+      // eslint-disable-next-line react/prop-types
+      // eslint-disable-next-line react/destructuring-assignment
+      this.props.history.push('/');
+   };
 
    render() {
       const childProps = {
@@ -50,57 +50,35 @@ class App extends Component {
          userHasAuthenticated: this.userHasAuthenticated
       };
       return (
-         <div className="">
-            <CssBaseline />
-            <Routes childProps={childProps} />
-            {/* eslint-disable-next-line react/destructuring-assignment */}
-            <Box
-               position="absolute"
-               top="16px"
-               right="16px"
-               zIndex="5000"
-               display="flex"
-               justifyContent="center"
-               mx="auto"
-            >
-               <Button
-                  onClick={this.handleLogout}
-                  variant="contained"
-                  color="primary"
-               >
-                  Log out
-               </Button>
-            </Box>
-         </div>
          // eslint-disable-next-line react/destructuring-assignment
-         // !this.state.isAuthenticating && (
-         //    <div className="">
-         //       <CssBaseline />
-         //       <Routes childProps={childProps} />
-         //       {/* eslint-disable-next-line react/destructuring-assignment */}
-         //       {this.state.isAuthenticated ? (
-         //          <Box
-         //             position="absolute"
-         //             top="16px"
-         //             right="16px"
-         //             zIndex="5000"
-         //             display="flex"
-         //             justifyContent="center"
-         //             mx="auto"
-         //          >
-         //             <Button
-         //                onClick={this.handleLogout}
-         //                variant="contained"
-         //                color="primary"
-         //             >
-         //                Log out
-         //             </Button>
-         //          </Box>
-         //       ) : (
-         //          <Fragment />
-         //       )}
-         //    </div>
-         // )
+         !this.state.isAuthenticating && (
+            <div className="">
+               <CssBaseline />
+               <Routes childProps={childProps} />
+               {/* eslint-disable-next-line react/destructuring-assignment */}
+               {this.state.isAuthenticated ? (
+                  <Box
+                     position="absolute"
+                     top="16px"
+                     right="16px"
+                     zIndex="5000"
+                     display="flex"
+                     justifyContent="center"
+                     mx="auto"
+                  >
+                     <Button
+                        onClick={this.handleLogout}
+                        variant="contained"
+                        color="primary"
+                     >
+                        Log out
+                     </Button>
+                  </Box>
+               ) : (
+                  <Fragment />
+               )}
+            </div>
+         )
       );
    }
 }
