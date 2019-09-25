@@ -19,6 +19,7 @@ import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { mainListItems, secondaryListItems } from './listItems';
 import Notes from './Notes';
+import Modal from './Modal';
 
 
 const drawerWidth = 240;
@@ -166,12 +167,27 @@ export default function Dashboard() {
                 <Box>
                 <Notes />
               </Box>
-              </Box>
+             
+                
+                </Box>
               </Paper>
-
+          
             </Grid>
-
-
+            
+            <Grid item xs={12} md={8} lg={9}>
+              <Paper className={fixedHeightPaper}>
+                <Box my={2}>
+                
+                <Box>
+                <Modal />
+              </Box>
+             
+                
+                </Box>
+              </Paper>
+          
+            </Grid>
+           
           </Grid>
         </Container>
       </main>
