@@ -59,13 +59,6 @@ func createUser(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(cred)
 }
 
-/**
-*
-*
-BROKEN 
-*
-*
-**/
 
 func verifyPassword(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint: verifyPassword")
@@ -79,9 +72,6 @@ func verifyPassword(w http.ResponseWriter, r *http.Request) {
 			storeCred = c
 		}
 	}
-
-	json.NewEncoder(w).Encode(cred)
-	json.NewEncoder(w).Encode(storeCred)
 
 	if err := bcrypt.CompareHashAndPassword([]byte(storeCred.Password), []byte(cred.Password)); err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
