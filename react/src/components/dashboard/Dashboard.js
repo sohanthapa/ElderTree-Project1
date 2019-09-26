@@ -187,8 +187,7 @@ export default function Dashboard() {
                            <EmployeeTable />
                         </Box>
                      </Paper>
-                   </Box>
-                 </Grid>
+                  </Grid>
                </Grid>
             </Container>
          </main>
