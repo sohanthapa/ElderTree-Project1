@@ -14,12 +14,12 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import { Link as RouterLink } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { mainListItems, secondaryListItems } from './listItems';
 import Modal from './AddModal';
 import TestModal from './UpdateModal';
+import EmployeeTable from './EmployeeTable';
 
 const drawerWidth = 240;
 
@@ -99,6 +99,9 @@ const useStyles = makeStyles(theme => ({
    },
    fixedHeight: {
       height: 240
+   },
+   button: {
+      margin: theme.spacing(1)
    }
 }));
 
@@ -167,42 +170,22 @@ export default function Dashboard() {
          <main className={classes.content}>
             <div className={classes.appBarSpacer} />
             <Container maxWidth="lg" className={classes.container}>
+               <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.button}
+               >
+                  Add
+               </Button>
+
                <Grid container spacing={3}>
                   {/* Chart */}
                   <Grid item xs={12} md={8} lg={9}>
-                     <Paper className={fixedHeightPaper}>
+                     <Paper>
+                        {/* Employee table */}
                         <Box my={2}>
-                           <Button variant="contained" color="secondary">
-                              <RouterLink
-                                 to="/notes/new"
-                                 style={{
-                                    textDecoration: 'none',
-                                    color: 'white'
-                                 }}
-                              >
-                                 Create New Note
-                              </RouterLink>
-                           </Button>
-                           <Box></Box>
+                           <EmployeeTable />
                         </Box>
-                     </Paper>
-                  </Grid>
-
-                 <Grid item xs={12} md={8} lg={9}>
-                   <Paper className={fixedHeightPaper}>
-                     <Box my={2}>
-                       <Box>
-                         <Modal />
-                       </Box>
-                     </Box>
-                   </Paper>
-                   <Box my={2}>
-                     <Paper className={fixedHeightPaper}>
-                       <Box my={2}>
-                         <Box>
-                           <TestModal />
-                         </Box>
-                       </Box>
                      </Paper>
                    </Box>
                  </Grid>
