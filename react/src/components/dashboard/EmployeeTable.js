@@ -9,7 +9,7 @@ import Paper from '@material-ui/core/Paper';
 
 const StyledTableCell = withStyles(theme => ({
    head: {
-      backgroundColor: theme.palette.common.black,
+      backgroundColor: '#3f51b5',
       color: theme.palette.common.white
    },
    body: {
@@ -25,8 +25,8 @@ const StyledTableRow = withStyles(theme => ({
    }
 }))(TableRow);
 
-function createData(name, calories, fat, carbs, protein) {
-   return { name, calories, fat, carbs, protein };
+function createData(employee, title, salary, buttons) {
+   return { employee, title, salary, buttons };
 }
 
 const rows = [
@@ -88,7 +88,7 @@ const useStyles = makeStyles(theme => ({
    }
 }));
 
-export default function CustomizedTables() {
+export default function EmployeeTable() {
    const classes = useStyles();
 
    return (
@@ -97,24 +97,20 @@ export default function CustomizedTables() {
             <TableHead>
                <TableRow>
                   <StyledTableCell>Employee</StyledTableCell>
-                  <StyledTableCell align="right">Title</StyledTableCell>
-                  <StyledTableCell align="right">Salary</StyledTableCell>
-                  <StyledTableCell align="right">Edit/Delete</StyledTableCell>
+                  <StyledTableCell>Title</StyledTableCell>
+                  <StyledTableCell>Salary</StyledTableCell>
+                  <StyledTableCell>Edit/Delete</StyledTableCell>
                </TableRow>
             </TableHead>
             <TableBody>
                {rows.map(row => (
-                  <StyledTableRow key={row.name}>
+                  <StyledTableRow key={row.employee}>
                      <StyledTableCell component="th" scope="row">
-                        {row.name}
+                        {row.employee}
                      </StyledTableCell>
-                     <StyledTableCell align="right">
-                        {row.calories}
-                     </StyledTableCell>
-                     <StyledTableCell align="right">{row.fat}</StyledTableCell>
-                     <StyledTableCell align="right">
-                        {row.carbs}
-                     </StyledTableCell>
+                     <StyledTableCell>{row.title}</StyledTableCell>
+                     <StyledTableCell>{row.salary}</StyledTableCell>
+                     <StyledTableCell>{row.buttons}</StyledTableCell>
                   </StyledTableRow>
                ))}
             </TableBody>
