@@ -39,26 +39,22 @@ func signupUser(w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusBadRequest)
 	}
 	var user User
-	var userPresent = false
 	json.Unmarshal(reqBody, &user)
 	
 	
 	//check if the email address already exist
 	for _, u := range Users {
 		if (u.Email == user.Email) {
-			userPresent =true
 			fmt.Println("Error: Email address already exist")
 			w.WriteHeader(http.StatusUnauthorized)
+			return
 		}
 	}
-	
-	if (userPresent == false){
-		fmt.Println("inside if")
-		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 8)
-		user.Password = string(hashedPassword)
-		Users = append(Users,user)
-		json.NewEncoder(w).Encode(user)
-	}
+
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 8)
+	user.Password = string(hashedPassword)
+	Users = append(Users,user)
+	json.NewEncoder(w).Encode(user)
 	
 		
 }
