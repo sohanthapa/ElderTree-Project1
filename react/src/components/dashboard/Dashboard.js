@@ -18,7 +18,7 @@ import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { mainListItems, secondaryListItems } from './listItems';
 import Modal from './AddModal';
-import TestModal from './UpdateModal';
+import UpdateModal from './UpdateModal';
 import EmployeeTable from './EmployeeTable';
 
 const drawerWidth = 240;
@@ -170,14 +170,9 @@ export default function Dashboard() {
          <main className={classes.content}>
             <div className={classes.appBarSpacer} />
             <Container maxWidth="lg" className={classes.container}>
-               <Button
-                  variant="contained"
-                  color="primary"
-                  className={classes.button}
-               >
-                  Add
-               </Button>
-
+               
+               <Modal />
+             
                <Grid container spacing={3}>
                   {/* Chart */}
                   <Grid item xs={12} md={8} lg={9}>
@@ -187,8 +182,7 @@ export default function Dashboard() {
                            <EmployeeTable />
                         </Box>
                      </Paper>
-                   </Box>
-                 </Grid>
+                  </Grid>
                </Grid>
             </Container>
          </main>

@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
+import AddIcon from '@material-ui/icons/Add';
 import LogInButton from '../login/LogInButton';
 
 function getModalStyle() {
@@ -24,6 +25,12 @@ const useStyles = makeStyles(theme => ({
     border: '2px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
+    button: {
+      margin: theme.spacing(1),
+    },
+  },
+  iconSmall: {
+    fontSize: 20,
   },
 }));
 
@@ -63,10 +70,17 @@ export default function AddModal() {
 
   return (
     <div>
-      <p>Click to get the full Modal experience!</p>
-      <button type="button" onClick={handleOpen}>
-        Test Modal Add Employee
-      </button>
+      <Button
+        className={classes.button}
+        variant="contained"
+        color="primary"
+        className={classes.button}
+        onClick={handleOpen}
+      >
+        <AddIcon className={classes.iconSmall} />
+        Add Employee
+       
+      </Button>
       <Modal
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"

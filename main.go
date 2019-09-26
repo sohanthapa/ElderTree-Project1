@@ -8,7 +8,82 @@ import (
 	// install: go get github.com/gorilla/mux
 	"github.com/gorilla/mux"
 	"io/ioutil"
+	// install: go get golang.org/x/crypto/bcrypt
+	"golang.org/x/crypto/bcrypt"
 )
+
+
+type User struct {
+	Id string `json: "Id"`
+	FirstName string `json: "FirstName"`
+	LastName string `json: "LastName"`
+	Email string `json: "Email"`
+	DOB string `json: "DOB"`
+	Gender string `json: "Gender"`
+	Password string `json: "Password"`
+}
+
+// User "database"
+var Users []User
+
+func allUsers(w http.ResponseWriter, r *http.Request){
+	fmt.Println("Endpoint: allUsers")
+	json.NewEncoder(w).Encode(Users)
+}
+
+
+func signupUser(w http.ResponseWriter, r *http.Request){
+	fmt.Println("Endpoint: signupUser")
+	reqBody, _ := ioutil.ReadAll(r.Body)
+	var user User
+	var userPresent = false
+	json.Unmarshal(reqBody, &user)
+	
+	
+	//check if the email address already exist
+	for _, u := range Users {
+		if (u.Email == user.Email) {
+			userPresent =true
+			break
+		}
+	}
+	
+	if (userPresent == false){
+		Users = append(Users, user)
+		// hash password and store it into database
+		var cred User
+		json.Unmarshal(reqBody, &cred)
+		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(cred.Password), 8)
+		cred.Password = string(hashedPassword)
+		Users = append(Users,cred)
+		json.NewEncoder(w).Encode(cred)
+	}
+	
+		
+}
+
+
+func userLogin(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Endpoint: userLogin")
+	reqBody, _ := ioutil.ReadAll(r.Body)
+	var cred User
+	json.Unmarshal(reqBody, &cred)
+
+	var storeCred User
+	for _, c := range Users {
+		if cred.Email == c.Email {
+			storeCred = c
+		}
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(storeCred.Password), []byte(cred.Password)); err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+	}
+}
+
+
+
+//Employee code part below
 
 type Employee struct {
 	Id string `json: "Id"` 
@@ -17,6 +92,7 @@ type Employee struct {
 	DOB string `json: "DOB"`
 	Salary string `json: "Salary"`
 	Title string `json: "Title"`
+	Gender string `json: "Gender"`
 }
 
 // Employee "database"
@@ -78,6 +154,12 @@ func handleRequests(){
 	myRouter := mux.NewRouter().StrictSlash(true)
 
 	// router mapping
+	myRouter.HandleFunc("/signup", signupUser).Methods("POST")
+	myRouter.HandleFunc("/login", userLogin).Methods("POST")
+
+	//myRouter.HandleFunc("/credentials", allCredentials).Methods("GET")
+	myRouter.HandleFunc("/users", allUsers).Methods("GET")
+
 	myRouter.HandleFunc("/employees", allEmployees).Methods("GET")
 	myRouter.HandleFunc("/employee", createEmployee).Methods("POST")
 	myRouter.HandleFunc("/employee/{id}", singleEmployee).Methods("GET")
@@ -89,8 +171,9 @@ func handleRequests(){
 
 func main(){
 	Employees = []Employee{
-		{"1", "John", "Doe", "1/1/1111", "50000", "Software Engineer"},
-		{"2", "Jane", "Doe", "2/2/2222", "100000", "Software Engineer"},
+		{"1", "John", "Doe", "1/1/1111", "50000", "Software Engineer", "Male"},
+		{"2", "Jane", "Doe", "2/2/2222", "100000", "Software Engineer", "Female"},
 	}
+	
 	handleRequests()
 }
