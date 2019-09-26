@@ -12,6 +12,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+
 type User struct {
 	Id string `json: "Id"`
 	FirstName string `json: "FirstName"`
@@ -19,6 +20,7 @@ type User struct {
 	Email string `json: "Email"`
 	DOB string `json: "DOB"`
 	Gender string `json: "Gender"`
+	Password string `json: "Password"`
 }
 
 // User "database"
@@ -29,45 +31,46 @@ func allUsers(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(Users)
 }
 
-type Credential struct {
-	Email string `json: "Email"`
-	Password string `json: "Password"`
-}
 
-// Credential "database"
-var Credentials []Credential
-
-func allCredentials(w http.ResponseWriter, r *http.Request){
-	fmt.Println("Endpoint: allCredentials")
-	json.NewEncoder(w).Encode(Credentials)
-}
-
-func createUser(w http.ResponseWriter, r *http.Request){
-	fmt.Println("Endpoint: createUser")
+func signupUser(w http.ResponseWriter, r *http.Request){
+	fmt.Println("Endpoint: signupUser")
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	var user User
+	var userPresent = false
 	json.Unmarshal(reqBody, &user)
-	Users = append(Users, user)
-	json.NewEncoder(w).Encode(user)
-
-	// hash password and store it into database
-	var cred Credential
-	json.Unmarshal(reqBody, &cred)
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(cred.Password), 8)
-	cred.Password = string(hashedPassword)
-	Credentials = append(Credentials, cred)
-	json.NewEncoder(w).Encode(cred)
+	
+	
+	//check if the email address already exist
+	for _, u := range Users {
+		if (u.Email == user.Email) {
+			userPresent =true
+			break
+		}
+	}
+	
+	if (userPresent == false){
+		Users = append(Users, user)
+		// hash password and store it into database
+		var cred User
+		json.Unmarshal(reqBody, &cred)
+		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(cred.Password), 8)
+		cred.Password = string(hashedPassword)
+		Users = append(Users,cred)
+		json.NewEncoder(w).Encode(cred)
+	}
+	
+		
 }
 
 
-func verifyPassword(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Endpoint: verifyPassword")
+func userLogin(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Endpoint: userLogin")
 	reqBody, _ := ioutil.ReadAll(r.Body)
-	var cred Credential
+	var cred User
 	json.Unmarshal(reqBody, &cred)
 
-	var storeCred Credential
-	for _, c := range Credentials {
+	var storeCred User
+	for _, c := range Users {
 		if cred.Email == c.Email {
 			storeCred = c
 		}
@@ -77,6 +80,10 @@ func verifyPassword(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 	}
 }
+
+
+
+//Employee code part below
 
 type Employee struct {
 	Id string `json: "Id"` 
@@ -147,10 +154,10 @@ func handleRequests(){
 	myRouter := mux.NewRouter().StrictSlash(true)
 
 	// router mapping
-	myRouter.HandleFunc("/register", createUser).Methods("POST")
-	myRouter.HandleFunc("/login", verifyPassword).Methods("POST")
+	myRouter.HandleFunc("/signup", signupUser).Methods("POST")
+	myRouter.HandleFunc("/login", userLogin).Methods("POST")
 
-	myRouter.HandleFunc("/credentials", allCredentials).Methods("GET")
+	//myRouter.HandleFunc("/credentials", allCredentials).Methods("GET")
 	myRouter.HandleFunc("/users", allUsers).Methods("GET")
 
 	myRouter.HandleFunc("/employees", allEmployees).Methods("GET")
@@ -167,5 +174,6 @@ func main(){
 		{"1", "John", "Doe", "1/1/1111", "50000", "Software Engineer", "Male"},
 		{"2", "Jane", "Doe", "2/2/2222", "100000", "Software Engineer", "Female"},
 	}
+	
 	handleRequests()
 }
