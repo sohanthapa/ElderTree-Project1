@@ -7,6 +7,10 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
+import Fab from '@material-ui/core/Fab';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+
 const StyledTableCell = withStyles(theme => ({
    head: {
       backgroundColor: '#3f51b5',
@@ -85,6 +89,9 @@ const useStyles = makeStyles(theme => ({
    },
    table: {
       minWidth: 700
+   },
+   fab: {
+      margin: theme.spacing(1)
    }
 }));
 
@@ -110,7 +117,18 @@ export default function EmployeeTable() {
                      </StyledTableCell>
                      <StyledTableCell>{row.title}</StyledTableCell>
                      <StyledTableCell>{row.salary}</StyledTableCell>
-                     <StyledTableCell>{row.buttons}</StyledTableCell>
+                     <StyledTableCell>
+                        <Fab
+                           color="primary"
+                           aria-label="edit"
+                           className={classes.fab}
+                        >
+                           <EditIcon />
+                        </Fab>
+                        <Fab aria-label="delete" className={classes.fab}>
+                           <DeleteIcon />
+                        </Fab>
+                     </StyledTableCell>
                   </StyledTableRow>
                ))}
             </TableBody>
