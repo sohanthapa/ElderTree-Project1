@@ -17,6 +17,8 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { mainListItems, secondaryListItems } from './listItems';
+import Modal from './AddModal';
+import TestModal from './UpdateModal';
 import EmployeeTable from './EmployeeTable';
 
 const drawerWidth = 240;
@@ -185,7 +187,8 @@ export default function Dashboard() {
                            <EmployeeTable />
                         </Box>
                      </Paper>
-                  </Grid>
+                   </Box>
+                 </Grid>
                </Grid>
             </Container>
          </main>
