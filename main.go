@@ -33,7 +33,7 @@ func allUsers(w http.ResponseWriter, r *http.Request){
 }
 
 
-func isValidSignUp(u User) bool {
+func isValidSignUpEntry(u User) bool {
 	if u.Id == "" || u.FirstName == "" || u.LastName == "" || u.Email == "" || u.Password == "" || u.DOB == "" || u.Gender == "" {
 		return false
 	}
@@ -41,6 +41,16 @@ func isValidSignUp(u User) bool {
 	return true
 }
 
+
+func emailExist(e string) bool {
+	for _, u := range Users {
+		if (u.Email == e) {
+			return true
+		}
+	}
+
+	return false
+}
 
 func signupUser(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: signupUser")
@@ -54,19 +64,19 @@ func signupUser(w http.ResponseWriter, r *http.Request){
 
 	
 	// check for empty fields
-	if !isValidSignUp(user) {
+	if !isValidSignUpEntry(user) {
+		fmt.Println("One or more field(s) is empty")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	
 	//check if the email address already exist
-	for _, u := range Users {
-		if (u.Email == user.Email) {
-			fmt.Println("Error: Email address already exist")
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
+	if emailExist(user.Email) {
+		fmt.Println("Email already exists")
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
+	
 
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 8)
 	user.Password = string(hashedPassword)
@@ -77,7 +87,7 @@ func signupUser(w http.ResponseWriter, r *http.Request){
 }
 
 
-func isValidLogin(u User) bool {
+func isValidLoginEntry(u User) bool {
 	if u.Email == "" || u.Password == "" {
 		return false
 	}
@@ -95,8 +105,15 @@ func userLogin(w http.ResponseWriter, r *http.Request) {
 	var user User
 	json.Unmarshal(reqBody, &user)
 
-	if !isValidLogin(user){
+	if !isValidLoginEntry(user){
+		fmt.Println("Email or password field is empty")
 		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if !emailExist(user.Email) {
+		fmt.Println("User account does not exist")
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
@@ -122,18 +139,20 @@ type Employee struct {
 	FirstName string `json: "FirstName"`
 	LastName string `json: "LastName"`
 	DOB string `json: "DOB"`
-	Salary string `json: "Salary"`
 	Title string `json: "Title"`
+	Salary string `json: "Salary"`
 	Gender string `json: "Gender"`
 }
 
 // Employee "database"
 var Employees []Employee
 
+
 func allEmployees(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: allEmployees")
 	json.NewEncoder(w).Encode(Employees)
 }
+
 
 func singleEmployee(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: singleEmployee")
@@ -147,6 +166,14 @@ func singleEmployee(w http.ResponseWriter, r *http.Request){
 	}
 }
 
+
+func isValidCreateEntry(e Employee) bool {
+	if e.Id == "" || e.FirstName == "" || e.LastName == "" || e.DOB == "" || e.Title == "" || e.Salary == "" || e.Gender == "" {
+		return false
+	}
+	return true
+}
+
 func createEmployee(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: createEmployee")
 	reqBody, err := ioutil.ReadAll(r.Body)
@@ -156,10 +183,29 @@ func createEmployee(w http.ResponseWriter, r *http.Request){
 	}
 	var employee Employee
 	json.Unmarshal(reqBody, &employee)
-	fmt.Println("value of employee salary is %s ", employee.Salary)
+
+	// check for empty fields
+	if !isValidCreateEntry(employee) {
+		fmt.Println("One or more field(s) is empty")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	Employees = append(Employees, employee)
 	json.NewEncoder(w).Encode(employee)
 }
+
+
+func employeeExist(id string) bool {
+	for _, employee := range Employees {
+		if id == employee.Id {
+			return true
+		}
+	}
+
+	return false
+}
+
 
 func updateEmployee(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: updateEmployee")
@@ -167,6 +213,12 @@ func updateEmployee(w http.ResponseWriter, r *http.Request){
 	id := vars["id"]
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if !employeeExist(id) {
+		fmt.Println("Employee does not exist")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -185,7 +237,8 @@ func deleteEmployee(w http.ResponseWriter, r *http.Request){
 
 	for idx, employee := range Employees {
 		if employee.Id == id {
-			Employees = append(Employees[:idx], Employees[idx+1])
+			Employees = append(Employees[:idx], Employees[idx+1:]...)
+			break
 		}
 	}
 }
@@ -214,7 +267,11 @@ func main(){
 	Employees = []Employee{
 		{"1", "John", "Doe", "1/1/1111", "50000", "Software Engineer", "Male"},
 		{"2", "Jane", "Doe", "2/2/2222", "100000", "Software Engineer", "Female"},
+		{"3", "Test", "User", "2/2/2222", "100000", "Software Engineer", "Male"},
 	}
 	
+	Users = []User{
+		{"1", "admin", "admin", "admin@eldertree.biz", "admin", "0/0/0000", "Male"},
+	}
 	handleRequests()
 }
