@@ -3,7 +3,7 @@ import axios from 'axios';
 export default class EmployeeService {
    static Insert(data, onSuccess, onError) {
       axios
-         .post(`/event/insert`, data, { withCredentials: true })
+         .post(``, data, { withCredentials: true })
          .then(onSuccess)
          .catch(onError);
    }
@@ -17,21 +17,21 @@ export default class EmployeeService {
 
    static SelectById(id, onSuccess, onError) {
       axios
-         .get(`/api/event/${id}`, { withCredentials: true })
+         .get(``, { withCredentials: true })
          .then(onSuccess)
          .catch(onError);
    }
 
    static Update(id, data, onSuccess, onError) {
       axios
-         .put(`/api/event/${id}`, data, { withCredentials: true })
+         .put(``, data, { withCredentials: true })
          .then(onSuccess)
          .catch(onError);
    }
 
    static Delete(id, onSuccess, onError) {
       axios
-         .delete(`/api/event/${id}`, { withCredentials: true })
+         .delete(``, { withCredentials: true })
          .then(onSuccess)
          .catch(onError);
    }
