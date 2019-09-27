@@ -65,7 +65,7 @@ class App extends Component {
                      display="flex"
                      justifyContent="center"
                      mx="auto"
-                  >
+                  >              
                      <Button
                         onClick={this.handleLogout}
                         variant="contained"
