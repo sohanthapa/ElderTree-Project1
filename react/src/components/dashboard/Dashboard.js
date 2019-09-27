@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -20,7 +20,9 @@ import { mainListItems, secondaryListItems } from './listItems';
 import Modal from './AddModal';
 import UpdateModal from './UpdateModal';
 import EmployeeTable from './EmployeeTable';
-
+import AddIcon from '@material-ui/icons/Add';
+import EmployeeService from '../../EmployeeService';
+import { bigIntLiteral } from '@babel/types';
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
@@ -99,15 +101,108 @@ const useStyles = makeStyles(theme => ({
    },
    fixedHeight: {
       height: 240
-   },
-   button: {
-      margin: theme.spacing(1)
    }
 }));
 
 export default function Dashboard() {
    const classes = useStyles();
    const [open, setOpen] = React.useState(true);
+   const [addModalVisible, setAddModalVisible] = useState(false);
+
+   //simgle employee data
+   const [fName, setfName] = useState();
+   const [lName, setlName] = useState();
+   const [birthDate, setBirthDate] = useState();
+   const [salary, setSalary] = useState();
+   const [jobTitle, setJobTitle] = useState();
+   const [gender, setGender] = useState();
+   const [employees, setEmployees] = useState([]);
+
+   useEffect(() => {
+      async function fetchData() {
+         EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
+      }
+      fetchData();
+      // return employees;
+   }, []);
+
+   const onGetEmployeesSuccess = response => {
+      console.log('success');
+      console.log(response);
+      let data = response.data.map(concatinateName);
+      console.log(data);
+      setEmployees(data);
+   };
+
+   const onGetEmployeesError = error => {
+      console.log('errorss', error.response);
+   };
+
+   const concatinateName = employee => {
+      employee.Employee = employee.FirstName.concat(' ', employee.LastName);
+      return employee;
+   };
+
+   const toggleAddModalVisibility = () => {
+      console.log('in');
+      if (addModalVisible) {
+         setAddModalVisible(false);
+      } else {
+         setAddModalVisible(true);
+      }
+   };
+
+   const handleInputChange = event => {
+      switch (event.target.id) {
+         case 'firstName':
+            setfName(event.target.value);
+            break;
+         case 'lastName':
+            setlName(event.target.value);
+            break;
+         case 'birthDate':
+            setBirthDate(event.target.value);
+            break;
+         case 'salary':
+            setSalary(event.target.value);
+            break;
+         case 'jobTitle':
+            setJobTitle(event.target.value);
+            break;
+         case 'gender':
+            setGender(event.target.value);
+            break;
+         default:
+            break;
+      }
+   };
+
+   const handleNewEmployeeSubmission = () => {
+      const employeeData = {
+         ID: '3',
+         FirstName: `${fName}`,
+         LastName: `${lName}`,
+         DOB: `${birthDate}`,
+         Salary: `${salary}`,
+         Title: `${jobTitle}`,
+         Gender: `${gender}`
+      };
+      EmployeeService.Insert(
+         employeeData,
+         onEmployeeSubmitSuccess,
+         onEmployeeSubmitError
+      );
+
+      toggleAddModalVisibility();
+   };
+
+   const onEmployeeSubmitSuccess = response => {
+      EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
+   };
+
+   const onEmployeeSubmitError = error => {
+      console.log('submit error', error);
+   };
 
    const toggleDrawerState = () => {
       if (open) {
@@ -171,14 +266,34 @@ export default function Dashboard() {
          <main className={classes.content}>
             <div className={classes.appBarSpacer} />
             <Container maxWidth="lg" className={classes.container}>
-               <Modal />
+               {/* ADD BUTTON */}
+               <Button
+                  className={classes.button}
+                  variant="contained"
+                  color="primary"
+                  className={classes.button}
+                  onClick={toggleAddModalVisibility}
+               >
+                  <AddIcon className={classes.iconSmall} />
+                  Add Employee
+               </Button>
+
+               <Modal
+                  modalState={addModalVisible}
+                  handleClose={toggleAddModalVisibility}
+                  handleSubmit={handleNewEmployeeSubmission}
+                  handleChange={handleInputChange}
+               />
                <Grid container spacing={3}>
                   {/* Chart */}
                   <Grid item xs={12} md={8} lg={9}>
                      <Paper>
                         {/* Employee table */}
                         <Box my={2}>
-                           <EmployeeTable />
+                           <EmployeeTable
+                              setEmployees={setEmployees}
+                              employees={employees}
+                           />
                         </Box>
                      </Paper>
                   </Grid>

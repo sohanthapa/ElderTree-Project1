@@ -6,11 +6,9 @@ import App from './App';
 import Dashboard from './components/dashboard/Dashboard';
 import SignUp from './components/signup/SignUp';
 
-
 render(
    <Router>
-      {/*<Dashboard />*/}
-      <SignUp />
+      <Dashboard />
    </Router>,
    document.getElementById('root')
 );
