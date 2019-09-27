@@ -77,6 +77,7 @@ export default function EmployeeTable() {
          EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
       }
       fetchData();
+      return employees;
    }, []);
 
    const onGetEmployeesSuccess = response => {
@@ -96,18 +97,21 @@ export default function EmployeeTable() {
       return employee;
    };
 
-   const onDeleteEmployeesSuccess = response => {
-      console.log('Success');
+   const onDeleteEmployeeSuccess = response => {
+      console.log('Delete Success', response);
+      EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
    };
 
-   const onDeleteEmployeesError = error => {
-      console.log('Successful Delete', error.response);
+   const onDeleteEmployeeError = error => {
+      console.log('Delete Error', error.response);
    };
 
    async function deleteEmployee(employeeId) {
-      let res = await EmployeeService.Delete(employeeId);
-
-      // console.log(res.status);
+      EmployeeService.Delete(
+         employeeId,
+         onDeleteEmployeeSuccess,
+         onDeleteEmployeeError
+      );
    }
 
    const handleDelete = employeeId => {
