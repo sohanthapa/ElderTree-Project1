@@ -20,9 +20,11 @@ import { mainListItems, secondaryListItems } from './listItems';
 import Modal from './AddModal';
 import UpdateModal from './UpdateModal';
 import EmployeeTable from './EmployeeTable';
+
 import AddIcon from '@material-ui/icons/Add';
 import EmployeeService from '../../EmployeeService';
 import { bigIntLiteral } from '@babel/types';
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
@@ -107,6 +109,7 @@ const useStyles = makeStyles(theme => ({
 export default function Dashboard() {
    const classes = useStyles();
    const [open, setOpen] = React.useState(true);
+
    const [addModalVisible, setAddModalVisible] = useState(false);
 
    //simgle employee data
@@ -204,6 +207,7 @@ export default function Dashboard() {
       console.log('submit error', error);
    };
 
+
    const toggleDrawerState = () => {
       if (open) {
          setOpen(false);
@@ -266,6 +270,7 @@ export default function Dashboard() {
          <main className={classes.content}>
             <div className={classes.appBarSpacer} />
             <Container maxWidth="lg" className={classes.container}>
+
                {/* ADD BUTTON */}
                <Button
                   className={classes.button}
@@ -284,6 +289,7 @@ export default function Dashboard() {
                   handleSubmit={handleNewEmployeeSubmission}
                   handleChange={handleInputChange}
                />
+
                <Grid container spacing={3}>
                   {/* Chart */}
                   <Grid item xs={12} md={8} lg={9}>
