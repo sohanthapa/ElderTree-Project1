@@ -18,17 +18,27 @@ type User struct {
 	FirstName string `json: "FirstName"`
 	LastName string `json: "LastName"`
 	Email string `json: "Email"`
+	Password string `json: "Password"`
 	DOB string `json: "DOB"`
 	Gender string `json: "Gender"`
-	Password string `json: "Password"`
 }
 
 // User "database"
 var Users []User
 
+
 func allUsers(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: allUsers")
 	json.NewEncoder(w).Encode(Users)
+}
+
+
+func isValidSignUp(u User) bool {
+	if u.Id == "" || u.FirstName == "" || u.LastName == "" || u.Email == "" || u.Password == "" || u.DOB == "" || u.Gender == "" {
+		return false
+	}
+
+	return true
 }
 
 
@@ -41,13 +51,19 @@ func signupUser(w http.ResponseWriter, r *http.Request){
 	}
 	var user User
 	json.Unmarshal(reqBody, &user)
+
 	
+	// check for empty fields
+	if !isValidSignUp(user) {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	
 	//check if the email address already exist
 	for _, u := range Users {
 		if (u.Email == user.Email) {
 			fmt.Println("Error: Email address already exist")
-			w.WriteHeader(http.StatusUnauthorized)
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 	}
@@ -61,6 +77,14 @@ func signupUser(w http.ResponseWriter, r *http.Request){
 }
 
 
+func isValidLogin(u User) bool {
+	if u.Email == "" || u.Password == "" {
+		return false
+	}
+	return true
+}
+
+
 func userLogin(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint: userLogin")
 	reqBody, err := ioutil.ReadAll(r.Body)
@@ -68,17 +92,22 @@ func userLogin(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	var cred User
-	json.Unmarshal(reqBody, &cred)
+	var user User
+	json.Unmarshal(reqBody, &user)
 
-	var storeCred User
-	for _, c := range Users {
-		if cred.Email == c.Email {
-			storeCred = c
+	if !isValidLogin(user){
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var userFromStore User
+	for _, u := range Users {
+		if user.Email == u.Email {
+			userFromStore = u
 		}
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(storeCred.Password), []byte(cred.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(userFromStore.Password), []byte(user.Password)); err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
