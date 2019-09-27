@@ -18,13 +18,13 @@ import EmployeeService from '../../EmployeeService';
 function getModalStyle() {
    const top = 50;
    const left = 50;
- 
+
    return {
-     top: `${top}%`,
-     left: `${left}%`,
-     transform: `translate(-${top}%, -${left}%)`,
+      top: `${top}%`,
+      left: `${left}%`,
+      transform: `translate(-${top}%, -${left}%)`
    };
- }
+}
 
 const StyledTableCell = withStyles(theme => ({
    head: {
@@ -66,12 +66,12 @@ export default function EmployeeTable() {
 
    const handleOpen = () => {
       setOpen(true);
-    };
-  
-    const handleClose = () => {
+   };
+
+   const handleClose = () => {
       setOpen(false);
-    };
-  
+   };
+
    useEffect(() => {
       async function fetchData() {
          EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
@@ -81,7 +81,9 @@ export default function EmployeeTable() {
 
    const onGetEmployeesSuccess = response => {
       console.log('success');
+      console.log(response);
       let data = response.data.map(concatinateName);
+      console.log(data);
       setEmployees(data);
    };
 
@@ -108,13 +110,11 @@ export default function EmployeeTable() {
       // console.log(res.status);
    }
 
-    const handleDelete = (employeeId) => {
-
+   const handleDelete = employeeId => {
       deleteEmployee(employeeId);
       console.log(employeeId);
-     
-   }
-   
+   };
+
    const onEditEmployeeSuccess = response => {
       console.log('Employee Information Updated');
    };
@@ -123,13 +123,11 @@ export default function EmployeeTable() {
       console.log('Cannot Update Employee Information', error.response);
    };
 
-
    // Test - change to modal
-   const handleEdit = (employeeId) => {
+   const handleEdit = employeeId => {
       console.log(employeeId);
-   }
+   };
 
-  
    return (
       <Paper className={classes.root}>
          <Table className={classes.table}>
@@ -137,6 +135,8 @@ export default function EmployeeTable() {
                <TableRow>
                   <StyledTableCell>Employee</StyledTableCell>
                   <StyledTableCell>Title</StyledTableCell>
+                  <StyledTableCell>DOB</StyledTableCell>
+                  <StyledTableCell>Gender</StyledTableCell>
                   <StyledTableCell>Salary</StyledTableCell>
                   <StyledTableCell>Edit/Delete</StyledTableCell>
                </TableRow>
@@ -148,14 +148,26 @@ export default function EmployeeTable() {
                         {employee.Employee}
                      </StyledTableCell>
                      <StyledTableCell>{employee.Title}</StyledTableCell>
+                     <StyledTableCell>{employee.DOB}</StyledTableCell>
+                     <StyledTableCell>{employee.Gender}</StyledTableCell>
                      <StyledTableCell>{employee.Salary}</StyledTableCell>
+
                      <StyledTableCell>
-                         <Fab onClick={() => handleEdit(employee.Id)} color="primary" aria-label="delete" className={classes.fab}>
-                           <EditIcon  />
+                        <Fab
+                           onClick={() => handleEdit(employee.Id)}
+                           color="primary"
+                           aria-label="delete"
+                           className={classes.fab}
+                        >
+                           <EditIcon />
                         </Fab>
-             
-                        <Fab onClick={() => handleDelete(employee.Id)} aria-label="delete" className={classes.fab}>
-                           <DeleteIcon  />
+
+                        <Fab
+                           onClick={() => handleDelete(employee.Id)}
+                           aria-label="delete"
+                           className={classes.fab}
+                        >
+                           <DeleteIcon />
                         </Fab>
                      </StyledTableCell>
                   </StyledTableRow>
