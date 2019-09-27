@@ -156,7 +156,8 @@ func deleteEmployee(w http.ResponseWriter, r *http.Request){
 
 	for idx, employee := range Employees {
 		if employee.Id == id {
-			Employees = append(Employees[:idx], Employees[idx+1])
+			Employees = append(Employees[:idx], Employees[idx+1:]...)
+			break
 		}
 	}
 }
@@ -185,6 +186,7 @@ func main(){
 	Employees = []Employee{
 		{"1", "John", "Doe", "1/1/1111", "50000", "Software Engineer", "Male"},
 		{"2", "Jane", "Doe", "2/2/2222", "100000", "Software Engineer", "Female"},
+		{"3", "Test", "User", "2/2/2222", "100000", "Software Engineer", "Male"},
 	}
 	
 	handleRequests()
