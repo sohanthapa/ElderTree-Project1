@@ -58,26 +58,17 @@ const useStyles = makeStyles(theme => ({
    }
 }));
 
-export default function EmployeeTable() {
+export default function EmployeeTable(props) {
    const classes = useStyles();
    const [open, setOpen] = useState(false);
    const [modalStyle] = useState(getModalStyle);
-   const [employees, setEmployees] = useState([]);
-
-   const handleOpen = () => {
-      setOpen(true);
-   };
-
-   const handleClose = () => {
-      setOpen(false);
-   };
 
    useEffect(() => {
       async function fetchData() {
          EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
       }
       fetchData();
-      return employees;
+      // return employees;
    }, []);
 
    const onGetEmployeesSuccess = response => {
@@ -85,7 +76,7 @@ export default function EmployeeTable() {
       console.log(response);
       let data = response.data.map(concatinateName);
       console.log(data);
-      setEmployees(data);
+      props.setEmployees(data);
    };
 
    const onGetEmployeesError = error => {
@@ -146,7 +137,7 @@ export default function EmployeeTable() {
                </TableRow>
             </TableHead>
             <TableBody>
-               {employees.map(employee => (
+               {props.employees.map(employee => (
                   <StyledTableRow key={employee.Id}>
                      <StyledTableCell component="th" scope="row">
                         {employee.Employee}
