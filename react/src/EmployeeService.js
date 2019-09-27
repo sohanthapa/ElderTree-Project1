@@ -1,71 +1,59 @@
 import axios from 'axios';
 
-class EmployeeService {
+export default class EmployeeService {
    static Insert(data, onSuccess, onError) {
-      axios.post(`/api/event/insert`,
-         data,
-         { withCredentials: true }
-      )
+      axios
+         .post(`/event/insert`, data, { withCredentials: true })
          .then(onSuccess)
-         .catch(onError)
+         .catch(onError);
    }
 
    static SelectAll(onSuccess, onError) {
-      axios.get(`/api/event/selectall`,
-         { withCredentials: true }
-      )
+      axios
+         .get(`/employees`, { withCredentials: true })
          .then(onSuccess)
-         .catch(onError)
+         .catch(onError);
    }
 
    static SelectAllExpanded(onSuccess, onError) {
-      axios.get(`/api/event/selectall/expanded`,
-         { withCredentials: true }
-      )
+      axios
+         .get(`/employees`, { withCredentials: true })
          .then(onSuccess)
-         .catch(onError)
+         .catch(onError);
    }
 
    static SelectAllListData(onSuccess, onError) {
-      axios.get(`/api/event/selectall/expanded/lists`,
-         { withCredentials: true }
-      )
+      axios
+         .get(`/api/event/selectall/expanded/lists`, { withCredentials: true })
          .then(onSuccess)
-         .catch(onError)
+         .catch(onError);
    }
 
    static SelectById(id, onSuccess, onError) {
-      axios.get(`/api/event/${id}`,
-         { withCredentials: true }
-      )
+      axios
+         .get(`/api/event/${id}`, { withCredentials: true })
          .then(onSuccess)
-         .catch(onError)
+         .catch(onError);
    }
 
    static SelectByAccountId(accountId, onSuccess, onError) {
-      axios.get(`/api/event/selectall/${accountId}/`,
-         { withCredentials: true }
-      )
+      axios
+         .get(`/api/event/selectall/${accountId}/`, { withCredentials: true })
          .then(onSuccess)
-         .catch(onError)
+         .catch(onError);
    }
 
    static Update(id, data, onSuccess, onError) {
-      axios.put(`/api/event/${id}`,
-         data,
-         { withCredentials: true }
-      )
+      axios
+         .put(`/api/event/${id}`, data, { withCredentials: true })
          .then(onSuccess)
-         .catch(onError)
+         .catch(onError);
    }
 
    static Delete(id, onSuccess, onError) {
-      axios.delete(`/api/event/${id}`,
-         { withCredentials: true }
-      )
+      axios
+         .delete(`/api/event/${id}`, { withCredentials: true })
          .then(onSuccess)
-         .catch(onError)
+         .catch(onError);
    }
-
 }
-export default EventService;

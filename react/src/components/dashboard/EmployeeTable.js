@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -11,6 +11,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 // For later update modal
 import UpdateModal from './UpdateModal';
+import EmployeeService from '../../EmployeeService';
 
 const StyledTableCell = withStyles(theme => ({
    head: {
@@ -30,58 +31,6 @@ const StyledTableRow = withStyles(theme => ({
    }
 }))(TableRow);
 
-function createData(employee, title, salary, buttons) {
-   return { employee, title, salary, buttons };
-}
-
-const rows = [
-   createData(
-      'John Snow',
-      'The King in the North',
-      80000,
-      <div>
-         <button>Edit</button>
-         <button>Delete</button>
-      </div>
-   ),
-   createData(
-      'Arya Stark',
-      'The Faceless Woman',
-      75000,
-      <div>
-         <button>Edit</button>
-         <button>Delete</button>
-      </div>
-   ),
-   createData(
-      'Daenerys Targaryen',
-      'The Mad Queen',
-      90000,
-      <div>
-         <button>Edit</button>
-         <button>Delete</button>
-      </div>
-   ),
-   createData(
-      'Sansa Stark',
-      'the Queen of WinterFell',
-      65000,
-      <div>
-         <button>Edit</button>
-         <button>Delete</button>
-      </div>
-   ),
-   createData(
-      'Sandor Clegane',
-      'The Hound',
-      55000,
-      <div>
-         <button>Edit</button>
-         <button>Delete</button>
-      </div>
-   )
-];
-
 const useStyles = makeStyles(theme => ({
    root: {
       width: '100%',
@@ -98,6 +47,29 @@ const useStyles = makeStyles(theme => ({
 
 export default function EmployeeTable() {
    const classes = useStyles();
+   const [employees, setEmployees] = useState([]);
+
+   useEffect(() => {
+      async function fetchData() {
+         EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
+      }
+      fetchData();
+   }, []);
+
+   const onGetEmployeesSuccess = response => {
+      console.log('success');
+      let data = response.data.map(concatinateName);
+      setEmployees(data);
+   };
+
+   const onGetEmployeesError = error => {
+      console.log('errorss', error.response);
+   };
+
+   const concatinateName = employee => {
+      employee.Employee = employee.FirstName.concat(' ', employee.LastName);
+      return employee;
+   };
 
    return (
       <Paper className={classes.root}>
@@ -111,13 +83,13 @@ export default function EmployeeTable() {
                </TableRow>
             </TableHead>
             <TableBody>
-               {rows.map(row => (
-                  <StyledTableRow key={row.employee}>
+               {employees.map(employee => (
+                  <StyledTableRow key={employee.Id}>
                      <StyledTableCell component="th" scope="row">
-                        {row.employee}
+                        {employee.Employee}
                      </StyledTableCell>
-                     <StyledTableCell>{row.title}</StyledTableCell>
-                     <StyledTableCell>{row.salary}</StyledTableCell>
+                     <StyledTableCell>{employee.Title}</StyledTableCell>
+                     <StyledTableCell>{employee.Salary}</StyledTableCell>
                      <StyledTableCell>
                         <Fab
                            color="primary"
