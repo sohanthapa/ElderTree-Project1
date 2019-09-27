@@ -71,6 +71,13 @@ class SignUp extends Component {
       });
    };
 
+   onUserSignUpSuccess = response => {
+      console.log('success', response);
+   };
+
+   onUserSignupError = response => {
+      console.log('error', response);
+   };
    handleSubmit = async event => {
       event.preventDefault();
 
@@ -82,22 +89,15 @@ class SignUp extends Component {
          DOB: 'DOB',
          Gender: 'M',
          Password: this.state.password
-      }
-      //alert(this.state.email);
-      //alert(this.state.password);
-   
-      // UserService.SignUp()
-      axios.post('/signup', { userSignUp })
-      .then((res) => {
-        console.log(res);
-        console.log(res.data);
-      })
+      };
+
+      UserService.SignUp(
+         userSignUp,
+         this.onUserSignUpSuccess,
+         this.onUSerSignupError
+      );
 
       alert('Redirect to login - Change');
-  
-
-
-
 
       // try {
       //    const newUser = await Auth.signUp({
