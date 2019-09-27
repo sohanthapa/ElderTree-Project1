@@ -58,6 +58,10 @@ export default function AddModal() {
     e.preventDefault();
     // Test submit button
     alert(`Submitting Information for: ${fName}`)
+    alert(`Submitting Information for: ${lName}`)
+    alert(`Submitting Information for: ${birthDate}`)
+    alert(`Submitting Information for: ${salary}`)
+    alert(`Submitting Information for: ${jobTitle}`)
     setOpen(false);
   }
 
