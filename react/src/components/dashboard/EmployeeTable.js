@@ -9,9 +9,22 @@ import Paper from '@material-ui/core/Paper';
 import Fab from '@material-ui/core/Fab';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import Modal from '@material-ui/core/Modal';
 // For later update modal
 import UpdateModal from './UpdateModal';
+import AddModal from './AddModal';
 import EmployeeService from '../../EmployeeService';
+
+function getModalStyle() {
+   const top = 50;
+   const left = 50;
+ 
+   return {
+     top: `${top}%`,
+     left: `${left}%`,
+     transform: `translate(-${top}%, -${left}%)`,
+   };
+ }
 
 const StyledTableCell = withStyles(theme => ({
    head: {
@@ -47,8 +60,18 @@ const useStyles = makeStyles(theme => ({
 
 export default function EmployeeTable() {
    const classes = useStyles();
+   const [open, setOpen] = useState(false);
+   const [modalStyle] = useState(getModalStyle);
    const [employees, setEmployees] = useState([]);
 
+   const handleOpen = () => {
+      setOpen(true);
+    };
+  
+    const handleClose = () => {
+      setOpen(false);
+    };
+  
    useEffect(() => {
       async function fetchData() {
          EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
@@ -71,6 +94,42 @@ export default function EmployeeTable() {
       return employee;
    };
 
+   const onDeleteEmployeesSuccess = response => {
+      console.log('Success');
+   };
+
+   const onDeleteEmployeesError = error => {
+      console.log('Successful Delete', error.response);
+   };
+
+   async function deleteEmployee(employeeId) {
+      let res = await EmployeeService.Delete(employeeId);
+
+      // console.log(res.status);
+   }
+
+    const handleDelete = (employeeId) => {
+
+      deleteEmployee(employeeId);
+      console.log(employeeId);
+     
+   }
+   
+   const onEditEmployeeSuccess = response => {
+      console.log('Employee Information Updated');
+   };
+
+   const onEditEmployeeError = error => {
+      console.log('Cannot Update Employee Information', error.response);
+   };
+
+
+   // Test - change to modal
+   const handleEdit = (employeeId) => {
+      console.log(employeeId);
+   }
+
+  
    return (
       <Paper className={classes.root}>
          <Table className={classes.table}>
@@ -91,15 +150,12 @@ export default function EmployeeTable() {
                      <StyledTableCell>{employee.Title}</StyledTableCell>
                      <StyledTableCell>{employee.Salary}</StyledTableCell>
                      <StyledTableCell>
-                        <Fab
-                           color="primary"
-                           aria-label="edit"
-                           className={classes.fab}
-                        >
-                           <EditIcon />
+                         <Fab onClick={() => handleEdit(employee.Id)} color="primary" aria-label="delete" className={classes.fab}>
+                           <EditIcon  />
                         </Fab>
-                        <Fab aria-label="delete" className={classes.fab}>
-                           <DeleteIcon />
+             
+                        <Fab onClick={() => handleDelete(employee.Id)} aria-label="delete" className={classes.fab}>
+                           <DeleteIcon  />
                         </Fab>
                      </StyledTableCell>
                   </StyledTableRow>

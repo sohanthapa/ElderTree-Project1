@@ -3,7 +3,7 @@ import axios from 'axios';
 export default class EmployeeService {
    static Insert(data, onSuccess, onError) {
       axios
-         .post(``, data, { withCredentials: true })
+         .post('/employee', data, { withCredentials: true })
          .then(onSuccess)
          .catch(onError);
    }
@@ -24,14 +24,14 @@ export default class EmployeeService {
 
    static Update(id, data, onSuccess, onError) {
       axios
-         .put(``, data, { withCredentials: true })
+         .put(`/employee/${id}`, data, { withCredentials: true })
          .then(onSuccess)
          .catch(onError);
    }
 
    static Delete(id, onSuccess, onError) {
       axios
-         .delete(``, { withCredentials: true })
+         .delete(`/employee/${id}`, { withCredentials: true })
          .then(onSuccess)
          .catch(onError);
    }

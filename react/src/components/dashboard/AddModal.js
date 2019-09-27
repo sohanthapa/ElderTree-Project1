@@ -5,6 +5,7 @@ import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
 import AddIcon from '@material-ui/icons/Add';
 import LogInButton from '../login/LogInButton';
+import EmployeeService from '../../EmployeeService';
 
 function getModalStyle() {
   const top = 50;
@@ -36,6 +37,7 @@ const useStyles = makeStyles(theme => ({
 
 
 export default function AddModal() {
+  
   const classes = useStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = useState(getModalStyle);
@@ -43,16 +45,14 @@ export default function AddModal() {
   // First name, Last Name, DOB, Salary, Job Title, Update Button, Cancel Button
   // Hooks for input values
   
+  // Refactor -  TOO DRY 
   const [fName, setfName] = useState();
   const [lName, setlName] = useState();
   const [birthDate, setBirthDate] = useState();
   const [salary, setSalary] = useState();
   const [jobTitle, setJobTitle] = useState();
+  const [gender, setGender] = useState();
   
-  
-  console.log(fName);
-
-
   const handleOpen = () => {
     setOpen(true);
   };
@@ -60,16 +60,43 @@ export default function AddModal() {
   const handleClose = () => {
     setOpen(false);
   };
+  const employeeData = {
+    ID: '3',
+    FirstName: `${fName}`,
+    LastName: `${lName}`,
+    DOB: `${birthDate}`,
+    Salary: `${salary}`,
+    Title: `${jobTitle}`,
+    Gender: `${gender}`,
 
+  };
+  const onPostEmployeeSuccess = () => {
+    console.log('Success');
+ };
+
+ const onPostEmployeeError = (error) => {
+    console.log('Failed to post', error.response);
+ };
+    // Refactor
+    async function postToEmployee() {
+      
+    EmployeeService.Insert(employeeData, onPostEmployeeSuccess, onPostEmployeeError);
+    
+  }
+  
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     // Test submit button
-    alert(`Submitting Information for: ${fName}`)
+    alert(`Submitting Information for employee: ${fName}`)
+ 
+    postToEmployee();
     setOpen(false);
   }
 
   return (
     <div>
+     
       <Button
         className={classes.button}
         variant="contained"
@@ -89,6 +116,7 @@ export default function AddModal() {
       >
         <div style={modalStyle} className={classes.paper}>
           <h2 id="simple-modal-title">Edit Employee Details</h2>
+          
           <form className={classes.form} onSubmit={handleSubmit}>
             <TextField
               variant="outlined"
@@ -97,7 +125,7 @@ export default function AddModal() {
               fullWidth
               id="firstName"
               type="text"
-              value=""
+              value={fName}
               onChange={e => setfName(e.target.value)}
               label="First Name"
               name="First Name"
@@ -112,7 +140,7 @@ export default function AddModal() {
               name="lastName"
               label="Last Name"
               type="text"
-              value=""
+              value={lName}
               onChange={e => setlName(e.target.value)}
               id="lName"
               autoComplete="on"
@@ -123,8 +151,8 @@ export default function AddModal() {
               required
               fullWidth
               name="birthDate"
-              type="date"
-              value=""
+              type="text"
+              value={birthDate}
               onChange={e => setBirthDate(e.target.value)}
               id="birthDate"
               autoComplete="on"
@@ -136,8 +164,8 @@ export default function AddModal() {
               fullWidth
               name="salary"
               label="Salary"
-              type="number"
-              value=""
+              type="text"
+              value={salary}
               onChange={e => setSalary(e.target.value)}
               id="salary"
               autoComplete="on"
@@ -150,11 +178,25 @@ export default function AddModal() {
               name="jobTitle"
               label="Job Title"
               type="text"
-              value=""
+              value={jobTitle}
               onChange={e => setJobTitle(e.target.value)}
               id="jobTitle"
               autoComplete="on"
             />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="Gender"
+              label="Gender"
+              type="text"
+              value={gender}
+              onChange={e => setGender(e.target.value)}
+              id="gender"
+              autoComplete="on"
+            />
+            
           
             <LogInButton
               block
