@@ -12,6 +12,8 @@ import { withStyles } from '@material-ui/styles';
 import Box from '@material-ui/core/Box';
 import { Link as RouterLink } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
+import UserService from '../../UserService';
+import axios from 'axios';
 
 const styles = theme => ({
    '@global': {
@@ -72,7 +74,30 @@ class SignUp extends Component {
    handleSubmit = async event => {
       event.preventDefault();
 
-      this.setState({ isLoading: true });
+      const userSignUp = {
+         Id: '1',
+         FirstName: 'Jan Paulo',
+         LastName: 'Gozum',
+         Email: this.state.email,
+         DOB: 'DOB',
+         Gender: 'M',
+         Password: this.state.password
+      }
+      //alert(this.state.email);
+      //alert(this.state.password);
+   
+      // UserService.SignUp()
+      axios.post('/signup', { userSignUp })
+      .then((res) => {
+        console.log(res);
+        console.log(res.data);
+      })
+
+      alert('Redirect to login - Change');
+  
+
+
+
 
       // try {
       //    const newUser = await Auth.signUp({
