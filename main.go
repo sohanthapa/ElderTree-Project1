@@ -34,30 +34,28 @@ func allUsers(w http.ResponseWriter, r *http.Request){
 
 func signupUser(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: signupUser")
-	reqBody, _ := ioutil.ReadAll(r.Body)
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	var user User
-	var userPresent = false
 	json.Unmarshal(reqBody, &user)
 	
 	
 	//check if the email address already exist
 	for _, u := range Users {
 		if (u.Email == user.Email) {
-			userPresent =true
-			break
+			fmt.Println("Error: Email address already exist")
+			w.WriteHeader(http.StatusUnauthorized)
+			return
 		}
 	}
-	
-	if (userPresent == false){
-		Users = append(Users, user)
-		// hash password and store it into database
-		var cred User
-		json.Unmarshal(reqBody, &cred)
-		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(cred.Password), 8)
-		cred.Password = string(hashedPassword)
-		Users = append(Users,cred)
-		json.NewEncoder(w).Encode(cred)
-	}
+
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 8)
+	user.Password = string(hashedPassword)
+	Users = append(Users,user)
+	json.NewEncoder(w).Encode(user)
 	
 		
 }
@@ -65,7 +63,11 @@ func signupUser(w http.ResponseWriter, r *http.Request){
 
 func userLogin(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint: userLogin")
-	reqBody, _ := ioutil.ReadAll(r.Body)
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	var cred User
 	json.Unmarshal(reqBody, &cred)
 
@@ -78,6 +80,7 @@ func userLogin(w http.ResponseWriter, r *http.Request) {
 
 	if err := bcrypt.CompareHashAndPassword([]byte(storeCred.Password), []byte(cred.Password)); err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
+		return
 	}
 }
 
@@ -117,9 +120,14 @@ func singleEmployee(w http.ResponseWriter, r *http.Request){
 
 func createEmployee(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: createEmployee")
-	reqBody, _ := ioutil.ReadAll(r.Body)
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	var employee Employee
 	json.Unmarshal(reqBody, &employee)
+	fmt.Println("value of employee salary is %s ", employee.Salary)
 	Employees = append(Employees, employee)
 	json.NewEncoder(w).Encode(employee)
 }
@@ -128,7 +136,11 @@ func updateEmployee(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: updateEmployee")
 	vars := mux.Vars(r)
 	id := vars["id"]
-	reqBody, _ := ioutil.ReadAll(r.Body)
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
 	for idx, employee := range Employees {
 		if employee.Id == id {
