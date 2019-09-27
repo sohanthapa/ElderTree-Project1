@@ -15,30 +15,9 @@ export default class EmployeeService {
          .catch(onError);
    }
 
-   static SelectAllExpanded(onSuccess, onError) {
-      axios
-         .get(`/employees`, { withCredentials: true })
-         .then(onSuccess)
-         .catch(onError);
-   }
-
-   static SelectAllListData(onSuccess, onError) {
-      axios
-         .get(`/api/event/selectall/expanded/lists`, { withCredentials: true })
-         .then(onSuccess)
-         .catch(onError);
-   }
-
    static SelectById(id, onSuccess, onError) {
       axios
          .get(`/api/event/${id}`, { withCredentials: true })
-         .then(onSuccess)
-         .catch(onError);
-   }
-
-   static SelectByAccountId(accountId, onSuccess, onError) {
-      axios
-         .get(`/api/event/selectall/${accountId}/`, { withCredentials: true })
          .then(onSuccess)
          .catch(onError);
    }
