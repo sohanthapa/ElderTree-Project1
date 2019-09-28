@@ -9,10 +9,10 @@ import Paper from '@material-ui/core/Paper';
 import Fab from '@material-ui/core/Fab';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import Modal from '@material-ui/core/Modal';
+
 // For later update modal
-import UpdateModal from './UpdateModal';
-import AddModal from './AddModal';
+// import UpdateModal from './UpdateModal';
+// import AddModal from './AddModal';
 import EmployeeService from '../../EmployeeService';
 
 function getModalStyle() {
