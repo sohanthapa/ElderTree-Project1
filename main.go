@@ -95,8 +95,8 @@ func isValidLoginEntry(u User) bool {
 }
 
 
-func userLogin(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Endpoint: userLogin")
+func loginUser(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Endpoint: loginUser")
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -249,9 +249,8 @@ func handleRequests(){
 
 	// router mapping
 	myRouter.HandleFunc("/signup", signupUser).Methods("POST")
-	myRouter.HandleFunc("/login", userLogin).Methods("POST")
+	myRouter.HandleFunc("/login", loginUser).Methods("POST")
 
-	//myRouter.HandleFunc("/credentials", allCredentials).Methods("GET")
 	myRouter.HandleFunc("/users", allUsers).Methods("GET")
 
 	myRouter.HandleFunc("/employees", allEmployees).Methods("GET")
