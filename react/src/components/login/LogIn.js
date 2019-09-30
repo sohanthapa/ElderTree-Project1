@@ -10,13 +10,11 @@ import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import PropTypes from 'prop-types';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { withStyles } from '@material-ui/styles';
 import LogInButton from './LogInButton';
 
-const styles = () => ({
+const styles = theme => ({
   '@global': {
     body: {
       backgroundColor: 'white',
@@ -38,7 +36,7 @@ const styles = () => ({
   },
   submit: {
     margin: 20,
-  },
+  }
 });
 
 class Login extends Component {
@@ -62,13 +60,14 @@ class Login extends Component {
      event.preventDefault();
 
      this.setState({ isLoading: true });
-     // this.props.history.push('/dashboard');
+     this.props.history.push('/dashboard');
      // try {
-     //     await Auth.signIn(this.state.email, this.state.password);
-     //     this.props.userHasAuthenticated(true);
-     //  } catch (e) {
+     //    await Auth.signIn(this.state.email, this.state.password);
+     //    this.props.userHasAuthenticated(true);
+     //    this.props.history.push('/dashboard');
+     // } catch (e) {
      //    alert(e.message);
-     //     this.setState({ isLoading: false });
+     //    this.setState({ isLoading: false });
      // }
    };
 
@@ -82,14 +81,8 @@ class Login extends Component {
   } */
 
    render() {
+     const { email, password } = this.state;
      const { classes } = this.props;
-     const {
-       email,
-       handleChange,
-       password,
-       isLoading,
-     } = this.state;
-
      return (
        <Container component="main" maxWidth="xs">
          <CssBaseline />
@@ -98,7 +91,7 @@ class Login extends Component {
              <LockOutlinedIcon />
            </Avatar>
            <Typography component="h1" variant="h5">
-         Sign in
+              Sign in
            </Typography>
            <form className={classes.form} onSubmit={this.handleSubmit}>
              <TextField
@@ -109,7 +102,7 @@ class Login extends Component {
                id="email"
                type="email"
                value={email}
-               onChange={handleChange}
+               onChange={this.handleChange}
                label="Email Address"
                name="email"
                autoComplete="email"
@@ -124,7 +117,7 @@ class Login extends Component {
                label="Password"
                type="password"
                value={password}
-               onChange={handleChange}
+               onChange={this.handleChange}
                id="password"
                autoComplete="current-password"
              />
@@ -137,7 +130,7 @@ class Login extends Component {
                bsSize="large"
                disabled={!this.validateForm()}
                type="submit"
-               isLoading={isLoading}
+               isLoading={this.state.isLoading}
                text="Sign In"
                className={classes.submit}
                variant="contained"
@@ -148,8 +141,8 @@ class Login extends Component {
 
              <Grid container>
                <Grid item xs>
-                 <Link href="" variant="body2">
-                   Forgot password?
+                 <Link href="#" variant="body2">
+                    Forgot password?
                  </Link>
                </Grid>
                <Grid item>
@@ -157,9 +150,7 @@ class Login extends Component {
                    to="/signup"
                    style={{ textDecoration: 'none' }}
                  >
-                   <Link href="" variant="body2">
-                     Sign Up
-                   </Link>
+                   <Link variant="body2">Sign Up</Link>
                  </RouterLink>
                </Grid>
              </Grid>
@@ -170,8 +161,8 @@ class Login extends Component {
    }
 }
 Login.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  classes: PropTypes.object.isRequired,
+   classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(Login);
+

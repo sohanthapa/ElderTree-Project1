@@ -63,25 +63,29 @@ export default function EmployeeTable(props) {
   const [open, setOpen] = useState(false);
   const [modalStyle] = useState(getModalStyle);
 
-  useEffect(() => {
+  const onGetEmployeesSuccess = response => {
+   console.log('success');
+   console.log(response);
+   let data = response.data.map(concatinateName);
+   console.log(data);
+   props.setEmployees(data);
+};
+
+const onGetEmployeesError = error => {
+   console.log('errorss', error.response);
+};
+  // !! seems to be causing infinite loop for requests !! //
+  {/* 
+   useEffect(() => {
     async function fetchData() {
       EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
     }
     fetchData();
     // return employees;
-  }, []);
+  }, [onGetEmployeesSuccess, onGetEmployeesError]); 
+*/}
 
-   const onGetEmployeesSuccess = response => {
-      console.log('success');
-      console.log(response);
-      let data = response.data.map(concatinateName);
-      console.log(data);
-      props.setEmployees(data);
-   };
-
-   const onGetEmployeesError = error => {
-      console.log('errorss', error.response);
-   };
+   
 
    const concatinateName = employee => {
       employee.Employee = employee.FirstName.concat(' ', employee.LastName);
