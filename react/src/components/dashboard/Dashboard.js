@@ -20,7 +20,7 @@ import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import AddIcon from '@material-ui/icons/Add';
 import { mainListItems } from './listItems';
-import Modal from './AddModal';
+import AddModal from './AddModal';
 // import UpdateModal from './UpdateModal';
 import EmployeeTable from './EmployeeTable';
 import EmployeeService from '../../services/EmployeeService';
@@ -112,7 +112,7 @@ export default function Dashboard() {
    const [open, setOpen] = React.useState(true);
 
    const [addModalVisible, setAddModalVisible] = useState(false);
-
+ 
    // single employee data
    const [fName, setfName] = useState();
    const [lName, setlName] = useState();
@@ -133,7 +133,6 @@ export default function Dashboard() {
          EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
       }
       fetchData();
-      // return employees;
    }, []);
 
    const onGetEmployeesSuccess = response => {
@@ -281,7 +280,7 @@ export default function Dashboard() {
                   Add Employee
                </Button>
 
-               <Modal
+               <AddModal
                   modalState={addModalVisible}
                   handleClose={toggleAddModalVisibility}
                   handleSubmit={handleNewEmployeeSubmission}

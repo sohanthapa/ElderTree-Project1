@@ -60,8 +60,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function EmployeeTable(props) {
    const classes = useStyles();
-   const [open, setOpen] = useState(false);
-   const [modalStyle] = useState(getModalStyle);
 
    const onGetEmployeesSuccess = response => {
       console.log('success');
@@ -74,18 +72,6 @@ export default function EmployeeTable(props) {
    const onGetEmployeesError = error => {
       console.log('errorss', error.response);
    };
-   // !! seems to be causing infinite loop for requests !! //
-   {
-      /* 
-   useEffect(() => {
-    async function fetchData() {
-      EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
-    }
-    fetchData();
-    // return employees;
-  }, [onGetEmployeesSuccess, onGetEmployeesError]); 
-*/
-   }
 
    const concatinateName = employee => {
       employee.Employee = employee.FirstName.concat(' ', employee.LastName);
