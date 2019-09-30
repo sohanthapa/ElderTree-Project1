@@ -77,6 +77,7 @@ class SignUp extends Component {
    handleSubmit = async (event) => {
      // Destructure
      const { email, password } = this.state;
+     const { history } = this.props;
      event.preventDefault();
 
      const userSignUp = {
@@ -94,10 +95,10 @@ class SignUp extends Component {
        this.onUserSignUpSuccess,
        this.onUSerSignupError,
      );
+     history.push('/');
 
      // eslint-disable-next-line no-alert
-     alert('Redirect to login - Change');
-
+     
      // try {
      //    const newUser = await Auth.signUp({
      //       username: this.state.email,

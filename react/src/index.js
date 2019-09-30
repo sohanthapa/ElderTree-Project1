@@ -4,11 +4,11 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import Dashboard from './components/dashboard/Dashboard';
-import SignUp from './components/signup/SignUp';
 
 render(
-   <Router>
-      <Dashboard />
-   </Router>,
-   document.getElementById('root')
+  <Router>
+    {/* <App /> */}
+    <Dashboard />
+  </Router>,
+  document.getElementById('root'),
 );
