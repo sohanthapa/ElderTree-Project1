@@ -77,9 +77,9 @@ class SignUp extends Component {
    onUserSignUpSuccess = (response) => {
      // eslint-disable-next-line no-console
      if (response.status === 200) {
+     this.props.userHasAuthenticated(true);
      this.props.history.push("/dashboard");
      }
-
    };
 
   onUserSignupError = (response) => {
@@ -91,7 +91,6 @@ class SignUp extends Component {
    handleSubmit = async (event) => {
      // Destructure
      const { email, password } = this.state;
-     
      event.preventDefault();
 
      const userSignUp = {
