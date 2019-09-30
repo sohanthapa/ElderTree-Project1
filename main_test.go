@@ -6,7 +6,7 @@ import (
     "testing"
 	"encoding/json"
 	"bytes"
-     "fmt"
+	"fmt"
     "github.com/gorilla/mux"
     "github.com/stretchr/testify/assert"
 )
@@ -16,6 +16,8 @@ func Router() *mux.Router {
 	router.HandleFunc("/employee", createEmployee).Methods("POST")
 	router.HandleFunc("/signup", signupUser).Methods("POST")
 	router.HandleFunc("/login", loginUser).Methods("POST")
+	router.HandleFunc("/employee/{id}", updateEmployee).Methods("PUT")
+	router.HandleFunc("/employee/{id}", deleteEmployee).Methods("DELETE")
     return router
 }
 
@@ -134,7 +136,7 @@ func TestCreateEmployee (t *testing.T) {
 		},
 	
 		{
-			Id:	"1", 
+			Id:	"2", 
 			FirstName:	"Sohan", 
 			LastName:	"Thapa", 
 			DOB:		"", 
@@ -155,13 +157,75 @@ func TestCreateEmployee (t *testing.T) {
 		
 	for	idx, employee := range input {
 		jsonEmployee, _ := json.Marshal(employee)
-		request, _ := http.NewRequest("POST", "/employee", bytes.NewBuffer(jsonEmployee))
+		request, err := http.NewRequest("POST", "/employee", bytes.NewBuffer(jsonEmployee))
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 		response := httptest.NewRecorder()
 		Router().ServeHTTP(response, request)
     	assert.Equal(t, expected[idx].Code, response.Code, expected[idx].Message)
+		
+		//checking for response body
 		if response.Code == 200 {
 			expected := string(`{"Id":"1","FirstName":"Sohan","LastName":"Thapa","DOB":"1/1/1111","Title":"Software Engineer","Salary":"50000","Gender":"Male"}`)
 			assert.JSONEq(t, expected, response.Body.String(), "Response body differs")
 		}
 	}
 }
+
+func TestUpdateEmployee(t *testing.T) {
+
+	employee := &Employee{
+			Id:	"1", 
+			FirstName:	"Sohan", 
+			LastName:	"Thapa", 
+			DOB:		"2/2/2222", 
+			Salary:		"50000", 
+			Title:		"Software Engineer", 
+			Gender:		"Male",
+	}
+	
+		jsonEmployee, _ := json.Marshal(employee)
+		correctRequest, err := http.NewRequest("PUT", "/employee/1", bytes.NewBuffer(jsonEmployee))		
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		response := httptest.NewRecorder()
+		Router().ServeHTTP(response, correctRequest)
+    	assert.Equal(t, 200, response.Code, "OK Response is expected")
+		badRequest, err := http.NewRequest("PUT", "/employee/8", bytes.NewBuffer(jsonEmployee) )
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		
+		Router().ServeHTTP(response, badRequest)
+		assert.Equal(t, 400, response.Code, "Bad Error Request is expected")
+	
+	
+}
+
+
+func TestDeleteEmployee (t *testing.T) {
+		correctRequest, err := http.NewRequest("DELETE", "/employee/1", nil)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		badRequest, err := http.NewRequest("DELETE", "/employee/8", nil)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		response := httptest.NewRecorder()
+		Router().ServeHTTP(response, correctRequest)
+    	assert.Equal(t, 200, response.Code, "OK Response is expected")
+		Router().ServeHTTP(response, badRequest)
+		assert.Equal(t, 400, response.Code, "Bad Error Request is expected")
+}
+
+
+
