@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -109,10 +109,10 @@ const useStyles = makeStyles(theme => ({
 
 export default function Dashboard() {
    const classes = useStyles();
-   const [open, setOpen] = React.useState(true);
+   const [open, setOpen] = useState(true);
 
    const [addModalVisible, setAddModalVisible] = useState(false);
- 
+
    // single employee data
    const [fName, setfName] = useState();
    const [lName, setlName] = useState();
@@ -191,7 +191,7 @@ export default function Dashboard() {
 
    const handleNewEmployeeSubmission = () => {
       const employeeData = {
-         ID: '3',
+         ID: '0',
          FirstName: `${fName}`,
          LastName: `${lName}`,
          DOB: `${birthDate}`,
@@ -199,6 +199,7 @@ export default function Dashboard() {
          Title: `${jobTitle}`,
          Gender: `${gender}`
       };
+      console.log('employee data', employeeData);
       EmployeeService.Insert(
          employeeData,
          onEmployeeSubmitSuccess,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -14,17 +14,6 @@ import DeleteIcon from '@material-ui/icons/Delete';
 // import UpdateModal from './UpdateModal';
 // import AddModal from './AddModal';
 import EmployeeService from '../../services/EmployeeService';
-
-function getModalStyle() {
-   const top = 50;
-   const left = 50;
-
-   return {
-      top: `${top}%`,
-      left: `${left}%`,
-      transform: `translate(-${top}%, -${left}%)`
-   };
-}
 
 const StyledTableCell = withStyles(theme => ({
    head: {
@@ -60,6 +49,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function EmployeeTable(props) {
    const classes = useStyles();
+   const [editModalVisible, setEditModalVisible] = useState(false);
 
    const onGetEmployeesSuccess = response => {
       console.log('success');
