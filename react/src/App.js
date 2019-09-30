@@ -17,15 +17,6 @@ class App extends Component {
   }
 
   async componentDidMount() {
-    try {
-    //         await Auth.currentSession();
-      this.userHasAuthenticated(true);
-    } catch (e) {
-      if (e !== 'No current user') {
-        alert(e);
-      }
-    }
-
     this.setState({ isAuthenticating: false });
   }
 
