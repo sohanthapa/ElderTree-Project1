@@ -6,7 +6,7 @@ import (
     "testing"
 	"encoding/json"
 	"bytes"
-
+     "fmt"
     "github.com/gorilla/mux"
     "github.com/stretchr/testify/assert"
 )
@@ -122,21 +122,46 @@ func TestLoginUser (t *testing.T) {
 
 
 func TestCreateEmployee (t *testing.T) {
-	employee := &Employee{
-		Id:	"1", 
-		FirstName:	"Sohan", 
-		LastName:	"Thapa", 
-		DOB:		"1/1/1111", 
-		Salary:		"50000", 
-		Title:		"Software Engineer", 
-		Gender:		"Male",
-		}
+	input := []Employee{
+		{
+			Id:	"1", 
+			FirstName:	"Sohan", 
+			LastName:	"Thapa", 
+			DOB:		"1/1/1111", 
+			Salary:		"50000", 
+			Title:		"Software Engineer", 
+			Gender:		"Male",
+		},
+	
+		{
+			Id:	"1", 
+			FirstName:	"Sohan", 
+			LastName:	"Thapa", 
+			DOB:		"", 
+			Salary:		"50000", 
+			Title:		"Software Engineer", 
+			Gender:		"Male",
+		},
+	}
+	
+	expected := []struct{
+		Code int
+		Message string
 		
-	jsonEmployee, _ := json.Marshal(employee)
-    request, _ := http.NewRequest("POST", "/employee", bytes.NewBuffer(jsonEmployee))
-    response := httptest.NewRecorder()
-    Router().ServeHTTP(response, request)
-    assert.Equal(t, 200, response.Code, "OK response is expected")
-    expected := string(`{"Id":"1","FirstName":"Sohan","LastName":"Thapa","DOB":"1/1/1111","Title":"Software Engineer","Salary":"50000","Gender":"Male"}`)
-	assert.JSONEq(t, expected, response.Body.String(), "Response body differs")
+	} {
+		{200, "OK Response is expected"},
+		{400, "Bad Error Request is expected"},
+	}
+		
+	for	idx, employee := range input {
+		jsonEmployee, _ := json.Marshal(employee)
+		request, _ := http.NewRequest("POST", "/employee", bytes.NewBuffer(jsonEmployee))
+		response := httptest.NewRecorder()
+		Router().ServeHTTP(response, request)
+    	assert.Equal(t, expected[idx].Code, response.Code, expected[idx].Message)
+		if response.Code == 200 {
+			expected := string(`{"Id":"1","FirstName":"Sohan","LastName":"Thapa","DOB":"1/1/1111","Title":"Software Engineer","Salary":"50000","Gender":"Male"}`)
+			assert.JSONEq(t, expected, response.Body.String(), "Response body differs")
+		}
+	}
 }
