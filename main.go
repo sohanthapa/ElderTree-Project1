@@ -218,7 +218,7 @@ func updateEmployee(w http.ResponseWriter, r *http.Request){
 	}
 
 	if !employeeExist(id) {
-		fmt.Println("Employee does not exist")
+		fmt.Println("Cannot update, Employee does not exist")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -235,6 +235,12 @@ func deleteEmployee(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
 	id := vars["id"]
 
+	if !employeeExist(id) {
+		fmt.Println("ERROR: Cannot delete, Employee does not exist")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	
 	for idx, employee := range Employees {
 		if employee.Id == id {
 			Employees = append(Employees[:idx], Employees[idx+1:]...)
