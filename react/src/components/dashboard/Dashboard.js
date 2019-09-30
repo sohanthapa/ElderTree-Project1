@@ -128,6 +128,14 @@ export default function Dashboard() {
     return employee;
   };
 
+  useEffect(() => {
+    async function fetchData() {
+      EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
+    }
+    fetchData();
+    // return employees;
+  }, []);
+
   const onGetEmployeesSuccess = (response) => {
     console.log('success');
     console.log(response);
@@ -139,13 +147,6 @@ export default function Dashboard() {
   const onGetEmployeesError = (error) => {
     console.log('Error', error.response);
   };
-  useEffect(() => {
-    async function fetchData() {
-      EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
-    }
-    fetchData();
-    // return employees;
-  }, [onGetEmployeesError, onGetEmployeesSuccess]);
 
   const toggleAddModalVisibility = () => {
     console.log('in');

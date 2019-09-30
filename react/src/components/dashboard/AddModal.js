@@ -12,7 +12,7 @@ function getModalStyle() {
   return {
     top: `${top}%`,
     left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`
+    transform: `translate(-${top}%, -${left}%)`,
   };
 }
 
@@ -34,7 +34,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function AddModal(props) {
-
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
 
