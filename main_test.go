@@ -124,8 +124,8 @@ func TestLoginUser (t *testing.T) {
 func TestCreateEmployee (t *testing.T) {
 	employee := &Employee{
 		Id:	"1", 
-		FirstName:	"John", 
-		LastName:	"Doe", 
+		FirstName:	"Sohan", 
+		LastName:	"Thapa", 
 		DOB:		"1/1/1111", 
 		Salary:		"50000", 
 		Title:		"Software Engineer", 
@@ -137,5 +137,6 @@ func TestCreateEmployee (t *testing.T) {
     response := httptest.NewRecorder()
     Router().ServeHTTP(response, request)
     assert.Equal(t, 200, response.Code, "OK response is expected")
-	
+    expected := string(`{"Id":"1","FirstName":"Sohan","LastName":"Thapa","DOB":"1/1/1111","Title":"Software Engineer","Salary":"50000","Gender":"Male"}`)
+	assert.JSONEq(t, expected, response.Body.String(), "Response body differs")
 }
