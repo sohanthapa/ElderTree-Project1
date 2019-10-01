@@ -44,7 +44,11 @@ func (users Users) getUser(e string) (User, error) {
 
 func allUsers(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: allUsers")
-	json.NewEncoder(w).Encode(usersDB)
+	if err:= json.NewEncoder(w).Encode(usersDB); err != nil {
+		fmt.Println("Error encoding usersDB")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 }
 
 func (u User) isValidSignUpEntry() bool {
@@ -165,7 +169,9 @@ func (employees Employees) getEmployee(id string) (Employee, error) {
 
 func allEmployees(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: allEmployees")
-	json.NewEncoder(w).Encode(employeeDB)
+	if err:= json.NewEncoder(w).Encode(employeeDB); err != nil {
+		fmt.Println("Error encoding employeeDB")
+	}
 }
 
 
