@@ -54,26 +54,6 @@ class SignUp extends Component {
       };
    }
 
-   handleConfirmationSubmit = async event => {
-      event.preventDefault();
-
-      this.setState({ isLoading: true });
-
-      // try {
-      //    await Auth.confirmSignUp(
-      //       this.state.email,
-      //       this.state.confirmationCode
-      //    );
-      //    await Auth.signIn(this.state.email, this.state.password);
-
-      //    this.props.userHasAuthenticated(true);
-      //    this.props.history.push('/dashboard');
-      // } catch (e) {
-      //    alert(e.message);
-      //    this.setState({ isLoading: false });
-      // }
-   };
-
    onUserSignUpSuccess = (response) => {
      // eslint-disable-next-line no-console
      if (response.status === 200) {
@@ -231,8 +211,8 @@ class SignUp extends Component {
                   </Grid>
                   <Box mt={2}>
                      <LogInButton
-                        block
-                        bsSize="large"
+                        block="true"
+                        bssize="large"
                         disabled={!this.validateForm()}
                         type="submit"
                         isLoading={isLoading}

@@ -18,10 +18,15 @@ class App extends Component {
 
   async componentDidMount() {
     this.setState({ isAuthenticating: false });
+    // Use localstorage for getItem
+    const authenticated = localStorage.getItem('authenticated');
+    this.setState({ isAuthenticated: authenticated });
   }
 
   userHasAuthenticated = (authenticated) => {
     this.setState({ isAuthenticated: authenticated });
+    // console.log(this.state.isAuthenticated);
+    localStorage.setItem('authenticated', this.state.isAuthenticated);
   };
 
   handleLogout = async () => {

@@ -1,10 +1,11 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
 import { Link as RouterLink } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -51,6 +52,7 @@ class Login extends Component {
       invalidCredentials: '',
     };
   }
+
   
    handleChange = async (event) => {
      this.setState({
@@ -58,20 +60,18 @@ class Login extends Component {
      });
    };
 
-   
-
    onUserLogInSuccess = (response) => {
-    // eslint-disable-next-line no-console
-    this.props.history.push("/dashboard");
-    this.props.userHasAuthenticated(true);
-  };
+     // eslint-disable-next-line no-console
+     this.props.history.push('/dashboard');
+     this.props.userHasAuthenticated(true);
+   };
+
   onUserLogInError = (response) => {
-  
+    console.log(response);
     // eslint-disable-next-line no-console
     return this.setState({ invalidCredentials: 'User account does not exist!'});
   };
 
-   
    handleSubmit = async (event) => {
      const { email, password } = this.state;
      event.preventDefault();
@@ -79,15 +79,15 @@ class Login extends Component {
      this.setState({ isLoading: true });
 
      const logInCredentials = {
-      Email: email,
-      Password: password
-    }
+       Email: email,
+       Password: password,
+     }
 
      UserService.LogIn(
-      logInCredentials,
-      this.onUserLogInSuccess,
-      this.onUserLogInError,
-    );
+       logInCredentials,
+       this.onUserLogInSuccess,
+       this.onUserLogInError,
+     );
     
      // try {
      //    await Auth.signIn(this.state.email, this.state.password);
@@ -97,8 +97,7 @@ class Login extends Component {
      //    alert(e.message);
      //    this.setState({ isLoading: false });
      // }
-     
-     
+        
      this.setState({ isLoading: false });
    };
 
@@ -161,7 +160,7 @@ class Login extends Component {
              />
              <LogInButton
                block
-               bsSize="large"
+               bssize="large"
                disabled={!this.validateForm()}
                type="submit"
                isLoading={this.state.isLoading}
@@ -174,17 +173,12 @@ class Login extends Component {
              />
 
              <Grid container>
-               <Grid item xs>
-                 <Link href="#" variant="body2">
-                    Forgot password?
-                 </Link>
-               </Grid>
                <Grid item>
                  <RouterLink
                    to="/signup"
-                   style={{ textDecoration: 'none' }}
+                   style={{ textDecoration: 'none', color: 'blue' }}
                  >
-                   <Link variant="body2">Sign Up</Link>
+                   Sign Up
                  </RouterLink>
                </Grid>
              </Grid>
