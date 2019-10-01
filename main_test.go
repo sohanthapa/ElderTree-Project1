@@ -36,7 +36,7 @@ func TestSignUpUser(t *testing.T){
 		{
 			Id: "2",
 			FirstName: "admin",
-			LastName: "",
+			LastName: "admin",
 			Email: "admin@eldertree.biz",
 			Password: "admin",
 			DOB: "0/0/0000",
