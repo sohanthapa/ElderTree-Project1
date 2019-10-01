@@ -44,13 +44,6 @@ export default function AddModal(props) {
    const classes = useStyles();
    const [modalStyle] = useState(getModalStyle);
 
-   // const [fName] = useState();
-   // const [lName] = useState();
-   // const [birthDate] = useState();
-   // const [salary] = useState();
-   // const [jobTitle] = useState();
-   // const [gender] = useState();
-
    return (
       <div>
          <Modal

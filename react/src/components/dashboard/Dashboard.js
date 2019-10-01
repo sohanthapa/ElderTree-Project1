@@ -111,6 +111,7 @@ const useStyles = makeStyles(theme => ({
 export default function Dashboard() {
    const classes = useStyles();
    const [drawerIsOpen, setDrawerOpen] = useState(true);
+   // const [modalIsVisible, setModalVisible] = useState(false);
    const [addModalIsVisible, setAddModalVisible] = useState(false);
    const [editModalIsVisible, setEditModalVisible] = useState(false);
    const [employees, setEmployees] = useState([]);
@@ -143,31 +144,32 @@ export default function Dashboard() {
    };
 
    const toggleAddModalVisibility = event => {
-      console.log(event.target);
-      if (event.target.innerText === 'CANCEL') {
-         emptyObject(Employee);
-      }
       if (addModalIsVisible) {
          setAddModalVisible(false);
       } else {
          setAddModalVisible(true);
       }
+      if (event.target.innerText === 'CANCEL') setEmployee(emptyObject);
    };
-
    const toggleEditModalVisibility = event => {
-      console.log(event);
       if (editModalIsVisible) {
          setEditModalVisible(false);
       } else {
          setEditModalVisible(true);
       }
+      if (event.target.innerText === 'CANCEL') setEmployee(emptyObject);
    };
 
    const emptyObject = obj => {
-      for (let prop in obj) {
-         obj[prop] = '';
-      }
-      obj.Id = '400';
+      return {
+         Id: '200',
+         FirstName: '',
+         LastName: '',
+         DOB: '',
+         Salary: '',
+         Title: '',
+         Gender: ''
+      };
    };
 
    const handleInputChange = event => {
@@ -216,7 +218,7 @@ export default function Dashboard() {
          onSelectAllEmployeesSuccess,
          onSelectAllEmployeesError
       );
-      emptyObject(Employee);
+      // emptyObject(Employee);
    };
 
    const onEmployeeSubmitError = error => {
@@ -231,6 +233,7 @@ export default function Dashboard() {
          onEmployeeSubmitError
       );
       toggleAddModalVisibility(event);
+      setEmployee(emptyObject);
    };
 
    const handleEditEmployeeSubmission = event => {
@@ -243,6 +246,7 @@ export default function Dashboard() {
       );
 
       toggleEditModalVisibility(event);
+      setEmployee(emptyObject);
    };
    return (
       <div className={classes.root}>
@@ -334,9 +338,7 @@ export default function Dashboard() {
                         {/* Employee table */}
                         <Box my={2}>
                            <EmployeeTable
-                              toggleEditModalVisibility={
-                                 toggleEditModalVisibility
-                              }
+                              toggleModalVisibility={toggleEditModalVisibility}
                               setEmployees={setEmployees}
                               setEmployee={setEmployee}
                               employees={employees}

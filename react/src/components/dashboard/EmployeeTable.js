@@ -52,7 +52,7 @@ export default function EmployeeTable(props) {
       employees,
       setEmployees,
       setEmployee,
-      toggleEditModalVisibility
+      toggleModalVisibility
    } = props;
 
    const classes = useStyles();
@@ -96,14 +96,15 @@ export default function EmployeeTable(props) {
       console.log(employeeId);
    };
 
-   const handleEdit = employeeId => {
-      toggleEditModalVisibility();
+   const handleEdit = (employeeId, event) => {
+      console.log(employees);
 
       const employee = employees.find(employee => {
          return employee.Id === employeeId;
       });
-      console.log(employee);
+      console.log(employees);
       setEmployee(employee);
+      toggleModalVisibility(event);
    };
 
    return (
@@ -132,7 +133,7 @@ export default function EmployeeTable(props) {
 
                      <StyledTableCell>
                         <Fab
-                           onClick={() => handleEdit(employee.Id)}
+                           onClick={event => handleEdit(employee.Id, event)}
                            color="primary"
                            aria-label="edit"
                            className={classes.fab}
@@ -141,7 +142,7 @@ export default function EmployeeTable(props) {
                         </Fab>
 
                         <Fab
-                           onClick={() => handleDelete(employee.Id)}
+                           onClick={event => handleDelete(employee.Id, event)}
                            aria-label="delete"
                            className={classes.fab}
                         >

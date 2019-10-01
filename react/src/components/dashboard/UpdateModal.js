@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
    }
 }));
 
-export default function AddModal(props) {
+export default function UpdateModal(props) {
    const {
       modalState,
       handleClose,
