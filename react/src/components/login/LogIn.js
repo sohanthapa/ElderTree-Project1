@@ -14,31 +14,31 @@ import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/styles';
 import LogInButton from './LogInButton';
-import UserService from '../../services/UserService'
+import UserService from '../../services/UserService';
 
 const styles = theme => ({
-  '@global': {
-    body: {
-      backgroundColor: 'white',
-    },
-  },
-  paper: {
-    marginTop: '50%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: 8,
-    backgroundColor: 'red',
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: 16,
-  },
-  submit: {
-    margin: 20,
-  }
+   '@global': {
+      body: {
+         backgroundColor: 'white'
+      }
+   },
+   paper: {
+      marginTop: '50%',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+   },
+   avatar: {
+      margin: 8,
+      backgroundColor: 'red'
+   },
+   form: {
+      width: '100%', // Fix IE 11 issue.
+      marginTop: 16
+   },
+   submit: {
+      margin: 20
+   }
 });
 
 class Login extends Component {
@@ -102,8 +102,8 @@ class Login extends Component {
    };
 
    validateForm() {
-     const { email, password } = this.state;
-     return email.length > 0 && password.length > 0;
+      const { email, password } = this.state;
+      return email.length > 0 && password.length > 0;
    }
 
    /* validateForm() {
@@ -193,4 +193,3 @@ Login.propTypes = {
 };
 
 export default withStyles(styles)(Login);
-

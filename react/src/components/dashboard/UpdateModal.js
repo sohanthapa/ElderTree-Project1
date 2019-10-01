@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
    }
 }));
 
-export default function AddModal(props) {
+export default function UpdateModal(props) {
    const {
       modalState,
       handleClose,

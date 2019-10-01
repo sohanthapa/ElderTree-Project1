@@ -3,21 +3,23 @@ import React, { useState, useEffect } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
+import {
+   CssBaseline,
+   Drawer,
+   AppBar,
+   Toolbar,
+   List,
+   Typography,
+   Divider,
+   IconButton,
+   Container,
+   Grid,
+   Paper,
+   Button,
+   Box
+} from '@material-ui/core/';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import Button from '@material-ui/core/Button';
-import Box from '@material-ui/core/Box';
 import AddIcon from '@material-ui/icons/Add';
 import { mainListItems } from './listItems';
 import AddModal from './AddModal';
@@ -108,21 +110,101 @@ const useStyles = makeStyles(theme => ({
 
 export default function Dashboard() {
    const classes = useStyles();
-   const [open, setOpen] = useState(true);
-
-   const [addModalVisible, setAddModalVisible] = useState(false);
-   const [editModalVisible, setEditModalVisible] = useState(false);
-
-   // single employee data
-   const [id, setId] = useState();
-   const [fName, setfName] = useState();
-   const [lName, setlName] = useState();
-   const [birthDate, setBirthDate] = useState();
-   const [salary, setSalary] = useState();
-   const [jobTitle, setJobTitle] = useState();
-   const [gender, setGender] = useState();
+   const [drawerIsOpen, setDrawerOpen] = useState(true);
+   const [addModalIsVisible, setAddModalVisible] = useState(false);
+   const [editModalIsVisible, setEditModalVisible] = useState(false);
    const [employees, setEmployees] = useState([]);
-   const [employee, setEmployee] = useState({});
+   const [Employee, setEmployee] = useState({
+      Id: '200',
+      FirstName: '',
+      LastName: '',
+      DOB: '',
+      Salary: '',
+      Title: '',
+      Gender: ''
+   });
+
+   useEffect(() => {
+      async function fetchData() {
+         EmployeeService.SelectAll(
+            onSelectAllEmployeesSuccess,
+            onSelectAllEmployeesError
+         );
+      }
+      fetchData();
+   }, []);
+
+   const toggleDrawerState = () => {
+      if (drawerIsOpen) {
+         setDrawerOpen(false);
+      } else {
+         setDrawerOpen(true);
+      }
+   };
+
+   const toggleAddModalVisibility = event => {
+      if (addModalIsVisible) {
+         setAddModalVisible(false);
+      } else {
+         setAddModalVisible(true);
+      }
+      if (event.target.innerText === 'CANCEL') setEmployee(emptyObject);
+   };
+   const toggleEditModalVisibility = event => {
+      if (editModalIsVisible) {
+         setEditModalVisible(false);
+      } else {
+         setEditModalVisible(true);
+      }
+      if (event.target.innerText === 'CANCEL') setEmployee(emptyObject);
+   };
+
+   const emptyObject = obj => {
+      return {
+         Id: '200',
+         FirstName: '',
+         LastName: '',
+         DOB: '',
+         Salary: '',
+         Title: '',
+         Gender: ''
+      };
+   };
+
+   const handleInputChange = event => {
+      switch (event.target.id) {
+         case 'firstName':
+            setEmployee({ ...Employee, FirstName: event.target.value });
+            break;
+         case 'lastName':
+            setEmployee({ ...Employee, LastName: event.target.value });
+            break;
+         case 'birthDate':
+            setEmployee({ ...Employee, DOB: event.target.value });
+            break;
+         case 'salary':
+            setEmployee({ ...Employee, Salary: event.target.value });
+            break;
+         case 'jobTitle':
+            setEmployee({ ...Employee, Title: event.target.value });
+            break;
+         case 'gender':
+            setEmployee({ ...Employee, Gender: event.target.value });
+            break;
+         default:
+            break;
+      }
+   };
+
+   const onSelectAllEmployeesSuccess = response => {
+      console.log('employees', response.data);
+      const data = response.data.map(concatinateName);
+      setEmployees(data);
+   };
+
+   const onSelectAllEmployeesError = error => {
+      console.log('Error', error.response);
+   };
 
    const concatinateName = employee => {
       // eslint-disable-next-line no-param-reassign
@@ -130,136 +212,50 @@ export default function Dashboard() {
       return employee;
    };
 
-   useEffect(() => {
-      async function fetchData() {
-         EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
-      }
-      fetchData();
-   }, []);
-
-   const onGetEmployeesSuccess = response => {
-      console.log('employees', response.data);
-      const data = response.data.map(concatinateName);
-      setEmployees(data);
-   };
-
-   const onGetEmployeesError = error => {
-      console.log('Error', error.response);
-   };
-
-   const toggleAddModalVisibility = () => {
-      console.log('in');
-      if (addModalVisible) {
-         setAddModalVisible(false);
-      } else {
-         setAddModalVisible(true);
-      }
-   };
-   const toggleEditModalVisibility = () => {
-      if (editModalVisible) {
-         setEditModalVisible(false);
-      } else {
-         setEditModalVisible(true);
-      }
-   };
-
-   const handleInputChange = event => {
-      console.log(event.target.value);
-      let newEmployee = null;
-      switch (event.target.id) {
-         case 'firstName':
-            setfName(event.target.value);
-            newEmployee = { ...employee, FirstName: event.target.value };
-            setEmployee(newEmployee);
-            break;
-         case 'lastName':
-            setlName(event.target.value);
-            newEmployee = { ...employee, LastName: event.target.value };
-            setEmployee(newEmployee);
-            break;
-         case 'birthDate':
-            setBirthDate(event.target.value);
-            newEmployee = { ...employee, DOB: event.target.value };
-            setEmployee(newEmployee);
-
-            break;
-         case 'salary':
-            setSalary(event.target.value);
-            newEmployee = { ...employee, Salary: event.target.value };
-            setEmployee(newEmployee);
-
-            break;
-         case 'jobTitle':
-            setJobTitle(event.target.value);
-            newEmployee = { ...employee, Title: event.target.value };
-            setEmployee(newEmployee);
-
-            break;
-         case 'gender':
-            setGender(event.target.value);
-            newEmployee = { ...employee, Gender: event.target.value };
-            setEmployee(newEmployee);
-
-            break;
-         default:
-            break;
-      }
-   };
-
    const onEmployeeSubmitSuccess = response => {
-      EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
+      EmployeeService.SelectAll(
+         onSelectAllEmployeesSuccess,
+         onSelectAllEmployeesError
+      );
+       emptyObject(Employee);
    };
 
    const onEmployeeSubmitError = error => {
       console.log('submit error', error);
    };
 
-   const handleNewEmployeeSubmission = () => {
-      const employeeData = {
-         Id: '0',
-         FirstName: `${fName}`,
-         LastName: `${lName}`,
-         DOB: `${birthDate}`,
-         Salary: `${salary}`,
-         Title: `${jobTitle}`,
-         Gender: `${gender}`
-      };
-      console.log('employee data', employeeData);
+   const handleNewEmployeeSubmission = event => {
+      console.log('employee data', Employee);
       EmployeeService.Insert(
-         employeeData,
+         Employee,
          onEmployeeSubmitSuccess,
          onEmployeeSubmitError
       );
-
-      toggleAddModalVisibility();
+      toggleAddModalVisibility(event);
+      setEmployee(emptyObject);
    };
 
-   const handleEditEmployeeSubmission = () => {
-      console.log(employee);
+   const handleEditEmployeeSubmission = event => {
+      console.log(Employee);
       EmployeeService.Update(
-         employee.Id,
-         employee,
+         Employee.Id,
+         Employee,
          onEmployeeSubmitSuccess,
          onEmployeeSubmitError
       );
 
-      toggleEditModalVisibility();
+      toggleEditModalVisibility(event);
+      setEmployee(emptyObject);
    };
-
-   const toggleDrawerState = () => {
-      if (open) {
-         setOpen(false);
-      } else {
-         setOpen(true);
-      }
-   };
-
    return (
       <div className={classes.root}>
          <CssBaseline />
          <AppBar
             position="absolute"
-            className={clsx(classes.appBar, open && classes.appBarShift)}
+            className={clsx(
+               classes.appBar,
+               drawerIsOpen && classes.appBarShift
+            )}
          >
             <Toolbar className={classes.toolbar}>
                <IconButton
@@ -269,7 +265,7 @@ export default function Dashboard() {
                   onClick={toggleDrawerState}
                   className={clsx(
                      classes.menuButton,
-                     open && classes.menuButtonHidden
+                     drawerIsOpen && classes.menuButtonHidden
                   )}
                >
                   <MenuIcon />
@@ -290,10 +286,10 @@ export default function Dashboard() {
             classes={{
                paper: clsx(
                   classes.drawerPaper,
-                  !open && classes.drawerPaperClose
+                  !drawerIsOpen && classes.drawerPaperClose
                )
             }}
-            open={open}
+            open={drawerIsOpen}
          >
             <div className={classes.toolbarIcon}>
                <IconButton onClick={toggleDrawerState}>
@@ -319,19 +315,19 @@ export default function Dashboard() {
                </Button>
 
                <AddModal
-                  modalState={addModalVisible}
+                  modalState={addModalIsVisible}
                   handleClose={toggleAddModalVisibility}
                   handleSubmit={handleNewEmployeeSubmission}
                   handleChange={handleInputChange}
-                  employee={employee}
+                  employee={Employee}
                />
 
                <UpdateModal
-                  modalState={editModalVisible}
+                  modalState={editModalIsVisible}
                   handleClose={toggleEditModalVisibility}
                   handleSubmit={handleEditEmployeeSubmission}
                   handleChange={handleInputChange}
-                  employee={employee}
+                  employee={Employee}
                />
 
                <Grid container spacing={3}>
@@ -341,9 +337,7 @@ export default function Dashboard() {
                         {/* Employee table */}
                         <Box my={2}>
                            <EmployeeTable
-                              toggleEditModalVisibility={
-                                 toggleEditModalVisibility
-                              }
+                              toggleModalVisibility={toggleEditModalVisibility}
                               setEmployees={setEmployees}
                               setEmployee={setEmployee}
                               employees={employees}
