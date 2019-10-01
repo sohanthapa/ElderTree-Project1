@@ -226,7 +226,7 @@ export default function Dashboard() {
       };
       console.log('employee data', employeeData);
       EmployeeService.Insert(
-         employee,
+         employeeData,
          onEmployeeSubmitSuccess,
          onEmployeeSubmitError
       );
