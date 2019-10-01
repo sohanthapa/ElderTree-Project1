@@ -115,7 +115,6 @@ export default function Dashboard() {
    const [editModalIsVisible, setEditModalVisible] = useState(false);
    const [employees, setEmployees] = useState([]);
    const [Employee, setEmployee] = useState({
-      Id: '200',
       FirstName: '',
       LastName: '',
       DOB: '',
@@ -161,7 +160,6 @@ export default function Dashboard() {
 
    const emptyObject = obj => {
       return {
-         Id: '200',
          FirstName: '',
          LastName: '',
          DOB: '',
@@ -217,7 +215,7 @@ export default function Dashboard() {
          onSelectAllEmployeesSuccess,
          onSelectAllEmployeesError
       );
-       emptyObject(Employee);
+      emptyObject(Employee);
    };
 
    const onEmployeeSubmitError = error => {
