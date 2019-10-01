@@ -111,7 +111,6 @@ const useStyles = makeStyles(theme => ({
 export default function Dashboard() {
    const classes = useStyles();
    const [drawerIsOpen, setDrawerOpen] = useState(true);
-   // const [modalIsVisible, setModalVisible] = useState(false);
    const [addModalIsVisible, setAddModalVisible] = useState(false);
    const [editModalIsVisible, setEditModalVisible] = useState(false);
    const [employees, setEmployees] = useState([]);
@@ -218,7 +217,7 @@ export default function Dashboard() {
          onSelectAllEmployeesSuccess,
          onSelectAllEmployeesError
       );
-      // emptyObject(Employee);
+       emptyObject(Employee);
    };
 
    const onEmployeeSubmitError = error => {
