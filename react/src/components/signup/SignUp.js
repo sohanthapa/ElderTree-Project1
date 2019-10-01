@@ -50,7 +50,7 @@ class SignUp extends Component {
          isLoading: false,
          email: '',
          password: '',
-         confirmPassword: ''
+         userExists: ''
       };
    }
 
@@ -84,8 +84,7 @@ class SignUp extends Component {
 
   onUserSignupError = (response) => {
     // eslint-disable-next-line no-console
-    console.log('test', response.status); 
-    console.log('error', response);   
+    return this.setState({ userExists: 'Email already registered!'});
   };
 
    handleSubmit = async (event) => {
@@ -112,7 +111,7 @@ class SignUp extends Component {
      UserService.SignUp(
        userSignUp,
        this.onUserSignUpSuccess,
-       this.onUSerSignupError,
+       this.onUserSignupError,
      );
      // eslint-disable-next-line no-alert
      
@@ -175,10 +174,12 @@ class SignUp extends Component {
                </Box>
 
                <Box mb={2}>
-                  <Typography component="h1" variant="h5">
-                     Sign up
+                  <Typography component="h1" variant="h6" color="secondary">
+                     {this.state.userExists}
                   </Typography>
                </Box>
+
+              
                <form
                   onSubmit={this.handleSubmit}
                   className="classes.form"

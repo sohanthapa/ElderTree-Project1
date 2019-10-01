@@ -48,21 +48,27 @@ class Login extends Component {
       isLoading: false,
       email: '',
       password: '',
+      invalidCredentials: '',
     };
   }
-
+  
    handleChange = async (event) => {
      this.setState({
        [event.target.id]: event.target.value,
      });
    };
 
- 
+   
 
    onUserLogInSuccess = (response) => {
     // eslint-disable-next-line no-console
     this.props.history.push("/dashboard");
     this.props.userHasAuthenticated(true);
+  };
+  onUserLogInError = (response) => {
+  
+    // eslint-disable-next-line no-console
+    return this.setState({ invalidCredentials: 'User account does not exist!'});
   };
 
    
@@ -80,7 +86,7 @@ class Login extends Component {
      UserService.LogIn(
       logInCredentials,
       this.onUserLogInSuccess,
-      this.onUSerLogInError,
+      this.onUserLogInError,
     );
     
      // try {
@@ -117,6 +123,9 @@ class Login extends Component {
            </Avatar>
            <Typography component="h1" variant="h5">
               Sign in
+           </Typography>
+           <Typography component="h1" variant="h6" color="secondary">
+              {this.state.invalidCredentials}
            </Typography>
            <form className={classes.form} onSubmit={this.handleSubmit}>
              <TextField
