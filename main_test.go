@@ -210,21 +210,46 @@ func TestUpdateEmployee(t *testing.T) {
 
 
 func TestDeleteEmployee (t *testing.T) {
+
+		employee := &Employee{
+				Id:	"1", 
+				FirstName:	"Sohan", 
+				LastName:	"Thapa", 
+				DOB:		"2/2/2222", 
+				Salary:		"50000", 
+				Title:		"Software Engineer", 
+				Gender:		"Male",
+		}
+		
+		//Creating an employee first
+		jsonEmployee, _ := json.Marshal(employee)
+		request, err := http.NewRequest("POST", "/employee", bytes.NewBuffer(jsonEmployee))
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		postResponse := httptest.NewRecorder()
+		Router().ServeHTTP(postResponse, request)
+    	assert.Equal(t, 200, postResponse.Code, "OK Response is expected")
+		
+		//Deleting the above created employee
+		deleteResponse := httptest.NewRecorder()
 		correctRequest, err := http.NewRequest("DELETE", "/employee/1", nil)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
+		Router().ServeHTTP(deleteResponse, correctRequest)
+		assert.Equal(t, 200, deleteResponse.Code, "OK Response is expected")
+		
 		badRequest, err := http.NewRequest("DELETE", "/employee/8", nil)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		response := httptest.NewRecorder()
-		Router().ServeHTTP(response, correctRequest)
-    	assert.Equal(t, 200, response.Code, "OK Response is expected")
-		Router().ServeHTTP(response, badRequest)
-		assert.Equal(t, 400, response.Code, "Bad Error Request is expected")
+ 
+		Router().ServeHTTP(deleteResponse, badRequest)
+		assert.Equal(t, 400, deleteResponse.Code, "Bad Error Request is expected")
 }
 
 
