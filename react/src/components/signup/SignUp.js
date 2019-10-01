@@ -50,29 +50,9 @@ class SignUp extends Component {
          isLoading: false,
          email: '',
          password: '',
-         confirmPassword: ''
+         userExists: ''
       };
    }
-
-   handleConfirmationSubmit = async event => {
-      event.preventDefault();
-
-      this.setState({ isLoading: true });
-
-      // try {
-      //    await Auth.confirmSignUp(
-      //       this.state.email,
-      //       this.state.confirmationCode
-      //    );
-      //    await Auth.signIn(this.state.email, this.state.password);
-
-      //    this.props.userHasAuthenticated(true);
-      //    this.props.history.push('/dashboard');
-      // } catch (e) {
-      //    alert(e.message);
-      //    this.setState({ isLoading: false });
-      // }
-   };
 
    onUserSignUpSuccess = (response) => {
      // eslint-disable-next-line no-console
@@ -84,8 +64,7 @@ class SignUp extends Component {
 
   onUserSignupError = (response) => {
     // eslint-disable-next-line no-console
-    console.log('test', response.status); 
-    console.log('error', response);   
+    return this.setState({ userExists: 'Email already registered!'});
   };
 
    handleSubmit = async (event) => {
@@ -112,7 +91,7 @@ class SignUp extends Component {
      UserService.SignUp(
        userSignUp,
        this.onUserSignUpSuccess,
-       this.onUSerSignupError,
+       this.onUserSignupError,
      );
      // eslint-disable-next-line no-alert
      
@@ -175,10 +154,12 @@ class SignUp extends Component {
                </Box>
 
                <Box mb={2}>
-                  <Typography component="h1" variant="h5">
-                     Sign up
+                  <Typography component="h1" variant="h6" color="secondary">
+                     {this.state.userExists}
                   </Typography>
                </Box>
+
+              
                <form
                   onSubmit={this.handleSubmit}
                   className="classes.form"
@@ -230,8 +211,8 @@ class SignUp extends Component {
                   </Grid>
                   <Box mt={2}>
                      <LogInButton
-                        block
-                        bsSize="large"
+                        block="true"
+                        bssize="large"
                         disabled={!this.validateForm()}
                         type="submit"
                         isLoading={isLoading}

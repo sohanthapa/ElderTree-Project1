@@ -1,10 +1,11 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
 import { Link as RouterLink } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -41,55 +42,63 @@ const styles = theme => ({
 });
 
 class Login extends Component {
-   constructor(props) {
-      super(props);
+  constructor(props) {
+    super(props);
 
-      this.state = {
-         isLoading: false,
-         email: '',
-         password: ''
-      };
-   }
+    this.state = {
+      isLoading: false,
+      email: '',
+      password: '',
+      invalidCredentials: '',
+    };
+  }
 
-   handleChange = async event => {
-      this.setState({
-         [event.target.id]: event.target.value
-      });
+  
+   handleChange = async (event) => {
+     this.setState({
+       [event.target.id]: event.target.value,
+     });
    };
 
-   onUserLogInSuccess = response => {
-      // eslint-disable-next-line no-console
-      this.props.history.push('/dashboard');
-      this.props.userHasAuthenticated(true);
+   onUserLogInSuccess = (response) => {
+     // eslint-disable-next-line no-console
+     this.props.history.push('/dashboard');
+     this.props.userHasAuthenticated(true);
    };
 
-   handleSubmit = async event => {
-      const { email, password } = this.state;
-      event.preventDefault();
+  onUserLogInError = (response) => {
+    console.log(response);
+    // eslint-disable-next-line no-console
+    return this.setState({ invalidCredentials: 'User account does not exist!'});
+  };
 
-      this.setState({ isLoading: true });
+   handleSubmit = async (event) => {
+     const { email, password } = this.state;
+     event.preventDefault();
 
-      const logInCredentials = {
-         Email: email,
-         Password: password
-      };
+     this.setState({ isLoading: true });
 
-      UserService.LogIn(
-         logInCredentials,
-         this.onUserLogInSuccess,
-         this.onUSerLogInError
-      );
+     const logInCredentials = {
+       Email: email,
+       Password: password,
+     }
 
-      // try {
-      //    await Auth.signIn(this.state.email, this.state.password);
-      //    this.props.userHasAuthenticated(true);
-      //    this.props.history.push('/dashboard');
-      // } catch (e) {
-      //    alert(e.message);
-      //    this.setState({ isLoading: false });
-      // }
-
-      this.setState({ isLoading: false });
+     UserService.LogIn(
+       logInCredentials,
+       this.onUserLogInSuccess,
+       this.onUserLogInError,
+     );
+    
+     // try {
+     //    await Auth.signIn(this.state.email, this.state.password);
+     //    this.props.userHasAuthenticated(true);
+     //    this.props.history.push('/dashboard');
+     // } catch (e) {
+     //    alert(e.message);
+     //    this.setState({ isLoading: false });
+     // }
+        
+     this.setState({ isLoading: false });
    };
 
    validateForm() {
@@ -102,6 +111,7 @@ class Login extends Component {
   } */
 
    render() {
+<<<<<<< HEAD
       const { email, password } = this.state;
       const { classes } = this.props;
       return (
@@ -179,6 +189,83 @@ class Login extends Component {
             </div>
          </Container>
       );
+=======
+     const { email, password } = this.state;
+     const { classes } = this.props;
+     return (
+       <Container component="main" maxWidth="xs">
+         <CssBaseline />
+         <div className={classes.paper}>
+           <Avatar className={classes.avatar}>
+             <LockOutlinedIcon />
+           </Avatar>
+           <Typography component="h1" variant="h5">
+              Sign in
+           </Typography>
+           <Typography component="h1" variant="h6" color="secondary">
+              {this.state.invalidCredentials}
+           </Typography>
+           <form className={classes.form} onSubmit={this.handleSubmit}>
+             <TextField
+               variant="outlined"
+               margin="normal"
+               required
+               fullWidth
+               id="email"
+               type="email"
+               value={email}
+               onChange={this.handleChange}
+               label="Email Address"
+               name="email"
+               autoComplete="email"
+               autoFocus
+             />
+             <TextField
+               variant="outlined"
+               margin="normal"
+               required
+               fullWidth
+               name="password"
+               label="Password"
+               type="password"
+               value={password}
+               onChange={this.handleChange}
+               id="password"
+               autoComplete="current-password"
+             />
+             <FormControlLabel
+               control={<Checkbox value="remember" color="primary" />}
+               label="Remember me"
+             />
+             <LogInButton
+               block
+               bssize="large"
+               disabled={!this.validateForm()}
+               type="submit"
+               isLoading={this.state.isLoading}
+               text="Sign In"
+               className={classes.submit}
+               variant="contained"
+               color="primary"
+               fullWidth
+               loadingText="Signing In..."
+             />
+
+             <Grid container>
+               <Grid item>
+                 <RouterLink
+                   to="/signup"
+                   style={{ textDecoration: 'none', color: 'blue' }}
+                 >
+                   Sign Up
+                 </RouterLink>
+               </Grid>
+             </Grid>
+           </form>
+         </div>
+       </Container>
+     );
+>>>>>>> 9b7100ca9bae374b488142d233c1b181bb9297d0
    }
 }
 Login.propTypes = {
