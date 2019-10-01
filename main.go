@@ -23,9 +23,10 @@ type User struct {
 	Gender string
 }
 
-//
+
 type Users []User
 
+// usersDB represents the users database that contains all users that are able to login.
 var usersDB Users
 
 var lastUserId int
@@ -67,14 +68,14 @@ func signupUser(w http.ResponseWriter, r *http.Request){
 	lastUserId += 1
 
 	
-	// check for empty fields
+	// isValidSignUpEntry validates the fields of user to make sure there is no empty field(s).
 	if !user.isValidSignUpEntry() {
 		fmt.Println("One or more field(s) is empty")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	
-	//check if the email address already exist
+	// If the email already exist within our database, return an error.
 	if _, err := usersDB.getUser(user.Email); err == nil {
 		fmt.Println("Email already exists")
 		w.WriteHeader(http.StatusBadRequest)
@@ -133,8 +134,6 @@ func loginUser(w http.ResponseWriter, r *http.Request) {
 }
 
 
-//Employee code part below
-
 type Employee struct {
 	Id string
 	FirstName string
@@ -145,11 +144,9 @@ type Employee struct {
 	Gender string
 }
 
-// Employee "database"
-//var Employees []Employee
-
 type Employees []Employee
 
+// employeeDB represents the employee database that contains all employee.
 var employeeDB Employees
 
 var lastEmployeeId int
@@ -189,7 +186,7 @@ func singleEmployee(w http.ResponseWriter, r *http.Request){
 
 
 func (e Employee) isValidCreateEntry() bool {
-	if e.Id == "" || e.FirstName == "" || e.LastName == "" || e.DOB == "" || e.Title == "" || e.Salary == "" || e.Gender == "" {
+	if e.FirstName == "" || e.LastName == "" || e.DOB == "" || e.Title == "" || e.Salary == "" || e.Gender == "" {
 		return false
 	}
 	return true
@@ -267,10 +264,9 @@ func deleteEmployee(w http.ResponseWriter, r *http.Request){
 }
 
 func handleRequests(){
-	// creates instance of mux router
 	myRouter := mux.NewRouter().StrictSlash(true)
 
-	// router mapping
+	// myRouter handles where the requests will be routed.
 	myRouter.HandleFunc("/signup", signupUser).Methods("POST")
 	myRouter.HandleFunc("/login", loginUser).Methods("POST")
 
@@ -286,11 +282,7 @@ func handleRequests(){
 }
 
 func main(){
-	usersDB = Users{
-		{"1", "admin", "admin", "admin@eldertree.biz", "admin", "0/0/0000", "Male"},
-	}
-
-	lastUserId = 1
+	lastUserId = 0
 	
 	
 	employeeDB = Employees{
