@@ -50,8 +50,9 @@ cd ElderTree-Project1
 cd react
 ```
 
-Start up react.
+Install missing dependencies and start up react.
 ```
+npm install
 npm start
 ```
 
