@@ -111,85 +111,6 @@ class Login extends Component {
   } */
 
    render() {
-<<<<<<< HEAD
-      const { email, password } = this.state;
-      const { classes } = this.props;
-      return (
-         <Container component="main" maxWidth="xs">
-            <CssBaseline />
-            <div className={classes.paper}>
-               <Avatar className={classes.avatar}>
-                  <LockOutlinedIcon />
-               </Avatar>
-               <Typography component="h1" variant="h5">
-                  Sign in
-               </Typography>
-               <form className={classes.form} onSubmit={this.handleSubmit}>
-                  <TextField
-                     variant="outlined"
-                     margin="normal"
-                     required
-                     fullWidth
-                     id="email"
-                     type="email"
-                     value={email}
-                     onChange={this.handleChange}
-                     label="Email Address"
-                     name="email"
-                     autoComplete="email"
-                     autoFocus
-                  />
-                  <TextField
-                     variant="outlined"
-                     margin="normal"
-                     required
-                     fullWidth
-                     name="password"
-                     label="Password"
-                     type="password"
-                     value={password}
-                     onChange={this.handleChange}
-                     id="password"
-                     autoComplete="current-password"
-                  />
-                  <FormControlLabel
-                     control={<Checkbox value="remember" color="primary" />}
-                     label="Remember me"
-                  />
-                  <LogInButton
-                     block
-                     bsSize="large"
-                     disabled={!this.validateForm()}
-                     type="submit"
-                     isLoading={this.state.isLoading}
-                     text="Sign In"
-                     className={classes.submit}
-                     variant="contained"
-                     color="primary"
-                     fullWidth
-                     loadingText="Signing In..."
-                  />
-
-                  <Grid container>
-                     <Grid item xs>
-                        <Link href="#" variant="body2">
-                           Forgot password?
-                        </Link>
-                     </Grid>
-                     <Grid item>
-                        <RouterLink
-                           to="/signup"
-                           style={{ textDecoration: 'none' }}
-                        >
-                           <Link variant="body2">Sign Up</Link>
-                        </RouterLink>
-                     </Grid>
-                  </Grid>
-               </form>
-            </div>
-         </Container>
-      );
-=======
      const { email, password } = this.state;
      const { classes } = this.props;
      return (
@@ -265,7 +186,6 @@ class Login extends Component {
          </div>
        </Container>
      );
->>>>>>> 9b7100ca9bae374b488142d233c1b181bb9297d0
    }
 }
 Login.propTypes = {
