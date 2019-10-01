@@ -146,13 +146,29 @@ type Employee struct {
 }
 
 // Employee "database"
-var Employees []Employee
+//var Employees []Employee
+
+type Employees []Employee
+
+var employeeDB Employees
 
 var lastEmployeeId int
 
+func (employees Employees) getEmployee(id string) (Employee, error) {
+		for _, employee := range employees {
+		if employee.Id == id {
+			return employee, nil
+		}
+	}
+
+	var e Employee
+	return e, errors.New("Employee does not exist")
+}
+
+
 func allEmployees(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: allEmployees")
-	json.NewEncoder(w).Encode(Employees)
+	json.NewEncoder(w).Encode(employeeDB)
 }
 
 
@@ -161,11 +177,14 @@ func singleEmployee(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
 	id := vars["id"]
 	
-	for _, employee := range Employees {
-		if employee.Id == id {
-			json.NewEncoder(w).Encode(employee)
-		}
+    employeeFromStore, err := employeeDB.getEmployee(id)
+	if err != nil {
+		fmt.Println("Employee does not exist")
+		w.WriteHeader(http.StatusUnauthorized)
+		return
 	}
+	
+	json.NewEncoder(w).Encode(employeeFromStore)
 }
 
 
@@ -195,20 +214,10 @@ func createEmployee(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	Employees = append(Employees, employee)
+	employeeDB = append(employeeDB, employee)
 	json.NewEncoder(w).Encode(employee)
 }
 
-
-func employeeExist(id string) bool {
-	for _, employee := range Employees {
-		if id == employee.Id {
-			return true
-		}
-	}
-
-	return false
-}
 
 
 func updateEmployee(w http.ResponseWriter, r *http.Request){
@@ -221,15 +230,17 @@ func updateEmployee(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	if !employeeExist(id) {
-		fmt.Println("Cannot update, Employee does not exist")
-		w.WriteHeader(http.StatusBadRequest)
+  _, error := employeeDB.getEmployee(id)
+	
+	if error != nil {
+		fmt.Println("Employee does not exist")
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
-	for idx, employee := range Employees {
+	for idx, employee := range employeeDB {
 		if employee.Id == id {
-			json.Unmarshal(reqBody, &Employees[idx])
+			json.Unmarshal(reqBody, &employeeDB[idx])
 		}
 	}
 }
@@ -239,15 +250,17 @@ func deleteEmployee(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
 	id := vars["id"]
 
-	if !employeeExist(id) {
-		fmt.Println("ERROR: Cannot delete, Employee does not exist")
-		w.WriteHeader(http.StatusBadRequest)
+    _, err := employeeDB.getEmployee(id)
+	
+	if err != nil {
+		fmt.Println("Employee does not exist")
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 	
-	for idx, employee := range Employees {
+	for idx, employee := range employeeDB {
 		if employee.Id == id {
-			Employees = append(Employees[:idx], Employees[idx+1:]...)
+			employeeDB = append(employeeDB[:idx], employeeDB[idx+1:]...)
 			break
 		}
 	}
@@ -279,7 +292,8 @@ func main(){
 
 	lastUserId = 1
 	
-	Employees = []Employee{
+	
+	employeeDB = Employees{
 		{"1", "John", "Doe", "1/1/1111", "50000", "Software Engineer", "Male"},
 		{"2", "Jane", "Doe", "2/2/2222", "100000", "Software Engineer", "Female"},
 		{"3", "Test", "User", "2/2/2222", "100000", "Software Engineer", "Male"},

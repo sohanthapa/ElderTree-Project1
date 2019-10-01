@@ -218,7 +218,6 @@ func TestCreateEmployee (t *testing.T) {
 func TestUpdateEmployee(t *testing.T) {
 
 	employee := &Employee{
-			Id:	"1", 
 			FirstName:	"Sohan", 
 			LastName:	"Thapa", 
 			DOB:		"2/2/2222", 
@@ -244,16 +243,13 @@ func TestUpdateEmployee(t *testing.T) {
 		}
 		
 		Router().ServeHTTP(response, badRequest)
-		assert.Equal(t, 400, response.Code, "Bad Error Request is expected")
-	
-	
+		assert.Equal(t, 401, response.Code, "Status Unauthorized is expected")
 }
 
 
 func TestDeleteEmployee (t *testing.T) {
 
 		employee := &Employee{
-				Id:	"1", 
 				FirstName:	"Sohan", 
 				LastName:	"Thapa", 
 				DOB:		"2/2/2222", 
@@ -275,7 +271,7 @@ func TestDeleteEmployee (t *testing.T) {
 		
 		//Deleting the above created employee
 		deleteResponse := httptest.NewRecorder()
-		correctRequest, err := http.NewRequest("DELETE", "/employee/1", nil)
+		correctRequest, err := http.NewRequest("DELETE", "/employee/3", nil)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -290,7 +286,7 @@ func TestDeleteEmployee (t *testing.T) {
 		}
  
 		Router().ServeHTTP(deleteResponse, badRequest)
-		assert.Equal(t, 400, deleteResponse.Code, "Bad Error Request is expected")
+		assert.Equal(t, 401, deleteResponse.Code, "Status Unauthorized is expected")
 }
 
 
