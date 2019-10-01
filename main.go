@@ -8,6 +8,8 @@ import (
 	"github.com/gorilla/mux"
 	"io/ioutil" 
 	"golang.org/x/crypto/bcrypt"
+	"errors"
+	"strconv"
 )
 
 
@@ -21,36 +23,36 @@ type User struct {
 	Gender string
 }
 
-// User "database"
-var Users []User
+//
+type Users []User
 
+var usersDB Users
+
+var lastUserId int
+
+func (users Users) getUser(e string) (User, error) {
+	for _, user := range users {
+		if user.Email == e {
+			return user, nil
+		}
+	}
+
+	var u User
+	return u, errors.New("Email does not exist")
+}
 
 func allUsers(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: allUsers")
-	json.NewEncoder(w).Encode(Users)
+	json.NewEncoder(w).Encode(usersDB)
 }
 
-
-func isValidSignUpEntry(u User) bool {
-	if u.Id == "" || u.FirstName == "" || u.LastName == "" || u.Email == "" || u.Password == "" || u.DOB == "" || u.Gender == "" {
+func (u User) isValidSignUpEntry() bool {
+	if u.FirstName == "" || u.LastName == "" || u.Email == "" || u.Password == "" || u.DOB == "" || u.Gender == "" {
 		return false
 	}
 
 	return true
 }
-
-
-func emailExist(e string) bool {
-	for _, u := range Users {
-		if (u.Email == e) {
-			return true
-		}
-	}
-
-	return false
-}
-
-var lastUserId int = 1
 
 func signupUser(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: signupUser")
@@ -61,19 +63,19 @@ func signupUser(w http.ResponseWriter, r *http.Request){
 	}
 	var user User
 	json.Unmarshal(reqBody, &user)
-	user.Id = string(lastUserId + 1)
+	user.Id = strconv.Itoa(lastUserId + 1)
 	lastUserId += 1
 
 	
 	// check for empty fields
-	if !isValidSignUpEntry(user) {
+	if !user.isValidSignUpEntry() {
 		fmt.Println("One or more field(s) is empty")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	
 	//check if the email address already exist
-	if emailExist(user.Email) {
+	if _, err := usersDB.getUser(user.Email); err == nil {
 		fmt.Println("Email already exists")
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -86,20 +88,18 @@ func signupUser(w http.ResponseWriter, r *http.Request){
 		return
 	}
 	user.Password = string(hashedPassword)
-	Users = append(Users,user)
+	usersDB = append(usersDB,user)
 	json.NewEncoder(w).Encode(user)
 	
 		
 }
 
-
-func isValidLoginEntry(u User) bool {
+func (u User) isValidLoginEntry() bool {
 	if u.Email == "" || u.Password == "" {
 		return false
 	}
 	return true
 }
-
 
 func loginUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint: loginUser")
@@ -111,23 +111,17 @@ func loginUser(w http.ResponseWriter, r *http.Request) {
 	var user User
 	json.Unmarshal(reqBody, &user)
 
-	if !isValidLoginEntry(user){
+	if !user.isValidLoginEntry() {
 		fmt.Println("Email or password field is empty")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	if !emailExist(user.Email) {
+	userFromStore, err := usersDB.getUser(user.Email)
+	if err != nil {
 		fmt.Println("User account does not exist")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
-	}
-
-	var userFromStore User
-	for _, u := range Users {
-		if user.Email == u.Email {
-			userFromStore = u
-		}
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(userFromStore.Password), []byte(user.Password)); err != nil {
@@ -140,8 +134,6 @@ func loginUser(w http.ResponseWriter, r *http.Request) {
 
 
 //Employee code part below
-
-var lastEmployeeId int = 3
 
 type Employee struct {
 	Id string
@@ -156,6 +148,7 @@ type Employee struct {
 // Employee "database"
 var Employees []Employee
 
+var lastEmployeeId int
 
 func allEmployees(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: allEmployees")
@@ -176,7 +169,7 @@ func singleEmployee(w http.ResponseWriter, r *http.Request){
 }
 
 
-func isValidCreateEntry(e Employee) bool {
+func (e Employee) isValidCreateEntry() bool {
 	if e.Id == "" || e.FirstName == "" || e.LastName == "" || e.DOB == "" || e.Title == "" || e.Salary == "" || e.Gender == "" {
 		return false
 	}
@@ -192,11 +185,11 @@ func createEmployee(w http.ResponseWriter, r *http.Request){
 	}
 	var employee Employee
 	json.Unmarshal(reqBody, &employee)
-	employee.Id = string(lastEmployeeId + 1)
+	employee.Id = strconv.Itoa(lastEmployeeId + 1)
 	lastEmployeeId += 1
 
 	// check for empty fields
-	if !isValidCreateEntry(employee) {
+	if !employee.isValidCreateEntry() {
 		fmt.Println("One or more field(s) is empty")
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -280,14 +273,19 @@ func handleRequests(){
 }
 
 func main(){
+	usersDB = Users{
+		{"1", "admin", "admin", "admin@eldertree.biz", "admin", "0/0/0000", "Male"},
+	}
+
+	lastUserId = 1
+	
 	Employees = []Employee{
 		{"1", "John", "Doe", "1/1/1111", "50000", "Software Engineer", "Male"},
 		{"2", "Jane", "Doe", "2/2/2222", "100000", "Software Engineer", "Female"},
 		{"3", "Test", "User", "2/2/2222", "100000", "Software Engineer", "Male"},
 	}
 	
-	Users = []User{
-		{"1", "admin", "admin", "admin@eldertree.biz", "admin", "0/0/0000", "Male"},
-	}
+	lastEmployeeId = 3
+	
 	handleRequests()
 }
