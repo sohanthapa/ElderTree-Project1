@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -13,79 +13,71 @@ import DeleteIcon from '@material-ui/icons/Delete';
 // For later update modal
 // import UpdateModal from './UpdateModal';
 // import AddModal from './AddModal';
-import EmployeeService from '../../EmployeeService';
-
-function getModalStyle() {
-  const top = 50;
-  const left = 50;
-
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`
-  };
-}
+import EmployeeService from '../../services/EmployeeService';
 
 const StyledTableCell = withStyles(theme => ({
-  head: {
-    backgroundColor: '#3f51b5',
-    color: theme.palette.common.white
-  },
-  body: {
-    fontSize: 14
-  }
+   head: {
+      backgroundColor: '#3f51b5',
+      color: theme.palette.common.white
+   },
+   body: {
+      fontSize: 14
+   }
 }))(TableCell);
 
 const StyledTableRow = withStyles(theme => ({
-  root: {
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.background.default,
-    },
-  },
+   root: {
+      '&:nth-of-type(odd)': {
+         backgroundColor: theme.palette.background.default
+      }
+   }
 }))(TableRow);
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    width: '100%',
-    marginTop: theme.spacing(3),
-    overflowX: 'auto',
-  },
-  table: {
-    minWidth: 700,
-  },
-  fab: {
-    margin: theme.spacing(1),
-  }
+   root: {
+      width: '100%',
+      marginTop: theme.spacing(3),
+      overflowX: 'auto'
+   },
+   table: {
+      minWidth: 700
+   },
+   fab: {
+      margin: theme.spacing(1)
+   }
 }));
 
 export default function EmployeeTable(props) {
-  const classes = useStyles();
-  const [open, setOpen] = useState(false);
-  const [modalStyle] = useState(getModalStyle);
+   const {
+      employees,
+      setEmployees,
+      setEmployee,
+      toggleEditModalVisibility
+   } = props;
 
-  const onGetEmployeesSuccess = response => {
-   console.log('success');
-   console.log(response);
-   let data = response.data.map(concatinateName);
-   console.log(data);
-   props.setEmployees(data);
-};
+   const classes = useStyles();
+   //const [editModalVisible, setEditModalVisible] = useState(false);
 
-const onGetEmployeesError = error => {
-   console.log('errorss', error.response);
-};
-  // !! seems to be causing infinite loop for requests !! //
-  {/* 
-   useEffect(() => {
-    async function fetchData() {
-      EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
-    }
-    fetchData();
-    // return employees;
-  }, [onGetEmployeesSuccess, onGetEmployeesError]); 
-*/}
+   // single employee data
+   const [id, setId] = useState();
+   const [fName, setfName] = useState();
+   const [lName, setlName] = useState();
+   const [birthDate, setBirthDate] = useState();
+   const [salary, setSalary] = useState();
+   const [jobTitle, setJobTitle] = useState();
+   const [gender, setGender] = useState();
 
-   
+   const onGetEmployeesSuccess = response => {
+      console.log('success');
+      console.log(response);
+      let data = response.data.map(concatinateName);
+      console.log(data);
+      setEmployees(data);
+   };
+
+   const onGetEmployeesError = error => {
+      console.log('errorss', error.response);
+   };
 
    const concatinateName = employee => {
       employee.Employee = employee.FirstName.concat(' ', employee.LastName);
@@ -124,7 +116,13 @@ const onGetEmployeesError = error => {
 
    // Test - change to modal
    const handleEdit = employeeId => {
-      console.log(employeeId);
+      toggleEditModalVisibility();
+
+      const employee = employees.find(employee => {
+         return employee.Id === employeeId;
+      });
+      console.log(employee);
+      setEmployee(employee);
    };
 
    return (
@@ -155,7 +153,7 @@ const onGetEmployeesError = error => {
                         <Fab
                            onClick={() => handleEdit(employee.Id)}
                            color="primary"
-                           aria-label="delete"
+                           aria-label="edit"
                            className={classes.fab}
                         >
                            <EditIcon />
