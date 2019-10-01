@@ -3,21 +3,23 @@ import React, { useState, useEffect } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
+import {
+   CssBaseline,
+   Drawer,
+   AppBar,
+   Toolbar,
+   List,
+   Typography,
+   Divider,
+   IconButton,
+   Container,
+   Grid,
+   Paper,
+   Button,
+   Box
+} from '@material-ui/core/';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import Button from '@material-ui/core/Button';
-import Box from '@material-ui/core/Box';
 import AddIcon from '@material-ui/icons/Add';
 import { mainListItems } from './listItems';
 import AddModal from './AddModal';
@@ -109,121 +111,28 @@ const useStyles = makeStyles(theme => ({
 export default function Dashboard() {
    const classes = useStyles();
    const [drawerIsOpen, setDrawerOpen] = useState(true);
-   const [addModalVisible, setAddModalVisible] = useState(false);
-   const [editModalVisible, setEditModalVisible] = useState(false);
+   const [addModalIsVisible, setAddModalVisible] = useState(false);
+   const [editModalIsVisible, setEditModalVisible] = useState(false);
    const [employees, setEmployees] = useState([]);
-   const [employee, setEmployee] = useState({
+   const [Employee, setEmployee] = useState({
       Id: '200',
-      FirstName: null,
-      LastName: null,
-      DOB: null,
-      Salary: null,
-      Title: null,
-      Gender: null
+      FirstName: '',
+      LastName: '',
+      DOB: '',
+      Salary: '',
+      Title: '',
+      Gender: ''
    });
-
-   const concatinateName = employee => {
-      // eslint-disable-next-line no-param-reassign
-      employee.Employee = employee.FirstName.concat(' ', employee.LastName);
-      return employee;
-   };
 
    useEffect(() => {
       async function fetchData() {
-         EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
+         EmployeeService.SelectAll(
+            onSelectAllEmployeesSuccess,
+            onSelectAllEmployeesError
+         );
       }
       fetchData();
    }, []);
-
-   const onGetEmployeesSuccess = response => {
-      console.log('employees', response.data);
-      const data = response.data.map(concatinateName);
-      setEmployees(data);
-   };
-
-   const onGetEmployeesError = error => {
-      console.log('Error', error.response);
-   };
-
-   const toggleAddModalVisibility = () => {
-      if (addModalVisible) {
-         setAddModalVisible(false);
-      } else {
-         setAddModalVisible(true);
-      }
-   };
-   const toggleEditModalVisibility = () => {
-      if (editModalVisible) {
-         setEditModalVisible(false);
-      } else {
-         setEditModalVisible(true);
-      }
-   };
-
-   const handleInputChange = event => {
-      switch (event.target.id) {
-         case 'firstName':
-            setEmployee({ ...employee, FirstName: event.target.value });
-            break;
-         case 'lastName':
-            setEmployee({ ...employee, LastName: event.target.value });
-            break;
-         case 'birthDate':
-            setEmployee({ ...employee, DOB: event.target.value });
-            break;
-         case 'salary':
-            setEmployee({ ...employee, Salary: event.target.value });
-            break;
-         case 'jobTitle':
-            setEmployee({ ...employee, Title: event.target.value });
-            break;
-         case 'gender':
-            setEmployee({ ...employee, Gender: event.target.value });
-            break;
-         default:
-            break;
-      }
-   };
-
-   const onEmployeeSubmitSuccess = response => {
-      EmployeeService.SelectAll(onGetEmployeesSuccess, onGetEmployeesError);
-   };
-
-   const onEmployeeSubmitError = error => {
-      console.log('submit error', error);
-   };
-
-   const handleNewEmployeeSubmission = () => {
-      // const employeeData = {
-      //    Id: '0',
-      //    FirstName: `${fName}`,
-      //    LastName: `${lName}`,
-      //    DOB: `${birthDate}`,
-      //    Salary: `${salary}`,
-      //    Title: `${jobTitle}`,
-      //    Gender: `${gender}`
-      // };
-      console.log('employee data', employee);
-      EmployeeService.Insert(
-         employee,
-         onEmployeeSubmitSuccess,
-         onEmployeeSubmitError
-      );
-
-      toggleAddModalVisibility();
-   };
-
-   const handleEditEmployeeSubmission = () => {
-      console.log(employee);
-      EmployeeService.Update(
-         employee.Id,
-         employee,
-         onEmployeeSubmitSuccess,
-         onEmployeeSubmitError
-      );
-
-      toggleEditModalVisibility();
-   };
 
    const toggleDrawerState = () => {
       if (drawerIsOpen) {
@@ -233,6 +142,108 @@ export default function Dashboard() {
       }
    };
 
+   const toggleAddModalVisibility = event => {
+      console.log(event.target);
+      if (event.target.innerText === 'CANCEL') {
+         emptyObject(Employee);
+      }
+      if (addModalIsVisible) {
+         setAddModalVisible(false);
+      } else {
+         setAddModalVisible(true);
+      }
+   };
+
+   const toggleEditModalVisibility = event => {
+      console.log(event);
+      if (editModalIsVisible) {
+         setEditModalVisible(false);
+      } else {
+         setEditModalVisible(true);
+      }
+   };
+
+   const emptyObject = obj => {
+      for (let prop in obj) {
+         obj[prop] = '';
+      }
+      obj.Id = '400';
+   };
+
+   const handleInputChange = event => {
+      switch (event.target.id) {
+         case 'firstName':
+            setEmployee({ ...Employee, FirstName: event.target.value });
+            break;
+         case 'lastName':
+            setEmployee({ ...Employee, LastName: event.target.value });
+            break;
+         case 'birthDate':
+            setEmployee({ ...Employee, DOB: event.target.value });
+            break;
+         case 'salary':
+            setEmployee({ ...Employee, Salary: event.target.value });
+            break;
+         case 'jobTitle':
+            setEmployee({ ...Employee, Title: event.target.value });
+            break;
+         case 'gender':
+            setEmployee({ ...Employee, Gender: event.target.value });
+            break;
+         default:
+            break;
+      }
+   };
+
+   const onSelectAllEmployeesSuccess = response => {
+      console.log('employees', response.data);
+      const data = response.data.map(concatinateName);
+      setEmployees(data);
+   };
+
+   const onSelectAllEmployeesError = error => {
+      console.log('Error', error.response);
+   };
+
+   const concatinateName = employee => {
+      // eslint-disable-next-line no-param-reassign
+      employee.Employee = employee.FirstName.concat(' ', employee.LastName);
+      return employee;
+   };
+
+   const onEmployeeSubmitSuccess = response => {
+      EmployeeService.SelectAll(
+         onSelectAllEmployeesSuccess,
+         onSelectAllEmployeesError
+      );
+      emptyObject(Employee);
+   };
+
+   const onEmployeeSubmitError = error => {
+      console.log('submit error', error);
+   };
+
+   const handleNewEmployeeSubmission = event => {
+      console.log('employee data', Employee);
+      EmployeeService.Insert(
+         Employee,
+         onEmployeeSubmitSuccess,
+         onEmployeeSubmitError
+      );
+      toggleAddModalVisibility(event);
+   };
+
+   const handleEditEmployeeSubmission = event => {
+      console.log(Employee);
+      EmployeeService.Update(
+         Employee.Id,
+         Employee,
+         onEmployeeSubmitSuccess,
+         onEmployeeSubmitError
+      );
+
+      toggleEditModalVisibility(event);
+   };
    return (
       <div className={classes.root}>
          <CssBaseline />
@@ -301,19 +312,19 @@ export default function Dashboard() {
                </Button>
 
                <AddModal
-                  modalState={addModalVisible}
+                  modalState={addModalIsVisible}
                   handleClose={toggleAddModalVisibility}
                   handleSubmit={handleNewEmployeeSubmission}
                   handleChange={handleInputChange}
-                  employee={employee}
+                  employee={Employee}
                />
 
                <UpdateModal
-                  modalState={editModalVisible}
+                  modalState={editModalIsVisible}
                   handleClose={toggleEditModalVisibility}
                   handleSubmit={handleEditEmployeeSubmission}
                   handleChange={handleInputChange}
-                  employee={employee}
+                  employee={Employee}
                />
 
                <Grid container spacing={3}>

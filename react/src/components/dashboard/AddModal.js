@@ -33,16 +33,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function AddModal(props) {
-   const classes = useStyles();
-   const [modalStyle] = useState(getModalStyle);
-
-   //   const [fName] = useState();
-   const [lName] = useState();
-   const [birthDate] = useState();
-   const [salary] = useState();
-   const [jobTitle] = useState();
-   const [gender] = useState();
-
    const {
       modalState,
       handleClose,
@@ -50,6 +40,16 @@ export default function AddModal(props) {
       handleChange,
       employee
    } = props;
+
+   const classes = useStyles();
+   const [modalStyle] = useState(getModalStyle);
+
+   // const [fName] = useState();
+   // const [lName] = useState();
+   // const [birthDate] = useState();
+   // const [salary] = useState();
+   // const [jobTitle] = useState();
+   // const [gender] = useState();
 
    return (
       <div>
@@ -85,7 +85,7 @@ export default function AddModal(props) {
                      name="lastName"
                      label="Last Name"
                      type="text"
-                     value={lName}
+                     value={employee.LastName}
                      onChange={handleChange}
                      id="lastName"
                      autoComplete="on"
@@ -98,7 +98,7 @@ export default function AddModal(props) {
                      name="birthDate"
                      label="DOB"
                      type="text"
-                     value={birthDate}
+                     value={employee.DOB}
                      onChange={handleChange}
                      id="birthDate"
                      autoComplete="on"
@@ -111,7 +111,7 @@ export default function AddModal(props) {
                      name="salary"
                      label="Salary"
                      type="text"
-                     value={salary}
+                     value={employee.Salary}
                      onChange={handleChange}
                      id="salary"
                      autoComplete="on"
@@ -124,7 +124,7 @@ export default function AddModal(props) {
                      name="jobTitle"
                      label="Job Title"
                      type="text"
-                     value={jobTitle}
+                     value={employee.Title}
                      onChange={handleChange}
                      id="jobTitle"
                      autoComplete="on"
@@ -137,15 +137,15 @@ export default function AddModal(props) {
                      name="Gender"
                      label="Gender"
                      type="text"
-                     value={gender}
+                     value={employee.Gender}
                      onChange={handleChange}
                      id="gender"
                      autoComplete="on"
                   />
 
                   <Button
-                     text="Sign In"
-                     className={classes.submit}
+                     text="Submit"
+                     className={classes.button}
                      variant="contained"
                      color="primary"
                      fullWidth
@@ -154,6 +154,7 @@ export default function AddModal(props) {
                      Submit
                   </Button>
                   <Button
+                     text="Cancel"
                      variant="contained"
                      color="secondary"
                      fullWidth
