@@ -43,7 +43,13 @@ export default function AddModal(props) {
    const [jobTitle] = useState();
    const [gender] = useState();
 
-   const { modalState, handleClose, handleSubmit, handleChange } = props;
+   const {
+      modalState,
+      handleClose,
+      handleSubmit,
+      handleChange,
+      employee
+   } = props;
 
    return (
       <div>
@@ -54,7 +60,7 @@ export default function AddModal(props) {
             onClose={handleClose}
          >
             <div style={modalStyle} className={classes.paper}>
-               <h2 id="simple-modal-title">Edit Employee Details</h2>
+               <h2 id="simple-modal-title">Employee Details</h2>
 
                <form className={classes.form}>
                   <TextField
@@ -64,7 +70,7 @@ export default function AddModal(props) {
                      fullWidth
                      id="firstName"
                      type="text"
-                     value={fName}
+                     value={employee.FirstName}
                      onChange={handleChange}
                      label="First Name"
                      name="First Name"

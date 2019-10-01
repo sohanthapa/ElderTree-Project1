@@ -48,15 +48,31 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function EmployeeTable(props) {
+   const {
+      employees,
+      setEmployees,
+      setEmployee,
+      toggleEditModalVisibility
+   } = props;
+
    const classes = useStyles();
-   const [editModalVisible, setEditModalVisible] = useState(false);
+   //const [editModalVisible, setEditModalVisible] = useState(false);
+
+   // single employee data
+   const [id, setId] = useState();
+   const [fName, setfName] = useState();
+   const [lName, setlName] = useState();
+   const [birthDate, setBirthDate] = useState();
+   const [salary, setSalary] = useState();
+   const [jobTitle, setJobTitle] = useState();
+   const [gender, setGender] = useState();
 
    const onGetEmployeesSuccess = response => {
       console.log('success');
       console.log(response);
       let data = response.data.map(concatinateName);
       console.log(data);
-      props.setEmployees(data);
+      setEmployees(data);
    };
 
    const onGetEmployeesError = error => {
@@ -100,7 +116,13 @@ export default function EmployeeTable(props) {
 
    // Test - change to modal
    const handleEdit = employeeId => {
-      console.log(employeeId);
+      toggleEditModalVisibility();
+
+      const employee = employees.find(employee => {
+         return employee.Id === employeeId;
+      });
+      console.log(employee);
+      setEmployee(employee);
    };
 
    return (
@@ -131,7 +153,7 @@ export default function EmployeeTable(props) {
                         <Fab
                            onClick={() => handleEdit(employee.Id)}
                            color="primary"
-                           aria-label="delete"
+                           aria-label="edit"
                            className={classes.fab}
                         >
                            <EditIcon />

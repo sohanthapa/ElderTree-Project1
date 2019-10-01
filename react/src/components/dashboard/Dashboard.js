@@ -21,10 +21,9 @@ import Box from '@material-ui/core/Box';
 import AddIcon from '@material-ui/icons/Add';
 import { mainListItems } from './listItems';
 import AddModal from './AddModal';
-// import UpdateModal from './UpdateModal';
+import UpdateModal from './UpdateModal';
 import EmployeeTable from './EmployeeTable';
 import EmployeeService from '../../services/EmployeeService';
-// import { bigIntLiteral } from '@babel/types';
 
 const drawerWidth = 240;
 
@@ -112,8 +111,10 @@ export default function Dashboard() {
    const [open, setOpen] = useState(true);
 
    const [addModalVisible, setAddModalVisible] = useState(false);
+   const [editModalVisible, setEditModalVisible] = useState(false);
 
    // single employee data
+   const [id, setId] = useState();
    const [fName, setfName] = useState();
    const [lName, setlName] = useState();
    const [birthDate, setBirthDate] = useState();
@@ -121,6 +122,7 @@ export default function Dashboard() {
    const [jobTitle, setJobTitle] = useState();
    const [gender, setGender] = useState();
    const [employees, setEmployees] = useState([]);
+   const [employee, setEmployee] = useState({});
 
    const concatinateName = employee => {
       // eslint-disable-next-line no-param-reassign
@@ -136,10 +138,8 @@ export default function Dashboard() {
    }, []);
 
    const onGetEmployeesSuccess = response => {
-      console.log('success');
-      console.log(response);
+      console.log('employees', response.data);
       const data = response.data.map(concatinateName);
-      console.log(data);
       setEmployees(data);
    };
 
@@ -155,26 +155,51 @@ export default function Dashboard() {
          setAddModalVisible(true);
       }
    };
+   const toggleEditModalVisibility = () => {
+      if (editModalVisible) {
+         setEditModalVisible(false);
+      } else {
+         setEditModalVisible(true);
+      }
+   };
 
    const handleInputChange = event => {
+      console.log(event.target.value);
+      let newEmployee = null;
       switch (event.target.id) {
          case 'firstName':
             setfName(event.target.value);
+            newEmployee = { ...employee, FirstName: event.target.value };
+            setEmployee(newEmployee);
             break;
          case 'lastName':
             setlName(event.target.value);
+            newEmployee = { ...employee, LastName: event.target.value };
+            setEmployee(newEmployee);
             break;
          case 'birthDate':
             setBirthDate(event.target.value);
+            newEmployee = { ...employee, DOB: event.target.value };
+            setEmployee(newEmployee);
+
             break;
          case 'salary':
             setSalary(event.target.value);
+            newEmployee = { ...employee, Salary: event.target.value };
+            setEmployee(newEmployee);
+
             break;
          case 'jobTitle':
             setJobTitle(event.target.value);
+            newEmployee = { ...employee, Title: event.target.value };
+            setEmployee(newEmployee);
+
             break;
          case 'gender':
             setGender(event.target.value);
+            newEmployee = { ...employee, Gender: event.target.value };
+            setEmployee(newEmployee);
+
             break;
          default:
             break;
@@ -191,7 +216,7 @@ export default function Dashboard() {
 
    const handleNewEmployeeSubmission = () => {
       const employeeData = {
-         ID: '0',
+         Id: '0',
          FirstName: `${fName}`,
          LastName: `${lName}`,
          DOB: `${birthDate}`,
@@ -201,12 +226,24 @@ export default function Dashboard() {
       };
       console.log('employee data', employeeData);
       EmployeeService.Insert(
-         employeeData,
+         employee,
          onEmployeeSubmitSuccess,
          onEmployeeSubmitError
       );
 
       toggleAddModalVisibility();
+   };
+
+   const handleEditEmployeeSubmission = () => {
+      console.log(employee);
+      EmployeeService.Update(
+         employee.Id,
+         employee,
+         onEmployeeSubmitSuccess,
+         onEmployeeSubmitError
+      );
+
+      toggleEditModalVisibility();
    };
 
    const toggleDrawerState = () => {
@@ -286,6 +323,15 @@ export default function Dashboard() {
                   handleClose={toggleAddModalVisibility}
                   handleSubmit={handleNewEmployeeSubmission}
                   handleChange={handleInputChange}
+                  employee={employee}
+               />
+
+               <UpdateModal
+                  modalState={editModalVisible}
+                  handleClose={toggleEditModalVisibility}
+                  handleSubmit={handleEditEmployeeSubmission}
+                  handleChange={handleInputChange}
+                  employee={employee}
                />
 
                <Grid container spacing={3}>
@@ -295,7 +341,11 @@ export default function Dashboard() {
                         {/* Employee table */}
                         <Box my={2}>
                            <EmployeeTable
+                              toggleEditModalVisibility={
+                                 toggleEditModalVisibility
+                              }
                               setEmployees={setEmployees}
+                              setEmployee={setEmployee}
                               employees={employees}
                            />
                         </Box>
