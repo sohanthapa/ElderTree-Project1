@@ -93,12 +93,21 @@ class SignUp extends Component {
      const { email, password } = this.state;
      event.preventDefault();
 
+     const userSignUp = {
+        Id: '1',
+        FirstName: 'Jan Paulo',
+        LastName: 'Gozum',
+        Email: email,
+        DOB: '112595',
+        Gender: 'M',
+        Password: password,
+     }
       UserService.SignUp(
          userSignUp,
          this.onUserSignUpSuccess,
          this.onUSerSignupError
       );
-      history.push('/');
+     
 
      UserService.SignUp(
        userSignUp,

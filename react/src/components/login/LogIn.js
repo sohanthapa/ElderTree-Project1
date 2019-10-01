@@ -13,7 +13,7 @@ import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/styles';
 import LogInButton from './LogInButton';
-import UserService from '../../UserService'
+import UserService from '../../services/UserService'
 
 const styles = theme => ({
   '@global': {
@@ -61,9 +61,8 @@ class Login extends Component {
 
    onUserLogInSuccess = (response) => {
     // eslint-disable-next-line no-console
-    console.log("test");
     this.props.history.push("/dashboard");
-
+    this.props.userHasAuthenticated(true);
   };
 
    
@@ -92,8 +91,8 @@ class Login extends Component {
      //    alert(e.message);
      //    this.setState({ isLoading: false });
      // }
-     this.props.history.push("/dashboard");
-     this.props.userHasAuthenticated(true);
+     
+     
      this.setState({ isLoading: false });
    };
 
