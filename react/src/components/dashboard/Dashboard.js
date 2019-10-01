@@ -113,7 +113,6 @@ export default function Dashboard() {
    const [drawerIsOpen, setDrawerOpen] = useState(true);
    const [addModalIsVisible, setAddModalVisible] = useState(false);
    const [editModalIsVisible, setEditModalVisible] = useState(false);
-   const [count, setCount] = useState(4);
    const [employees, setEmployees] = useState([]);
    const [Employee, setEmployee] = useState({
       FirstName: '',
