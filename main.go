@@ -5,51 +5,58 @@ import (
 	"log"
 	"net/http"
 	"encoding/json"
-	// install: go get github.com/gorilla/mux
 	"github.com/gorilla/mux"
-	"io/ioutil"
-	// install: go get golang.org/x/crypto/bcrypt
+	"io/ioutil" 
 	"golang.org/x/crypto/bcrypt"
+	"errors"
+	"strconv"
 )
 
 
 type User struct {
-	Id string `json: "Id"`
-	FirstName string `json: "FirstName"`
-	LastName string `json: "LastName"`
-	Email string `json: "Email"`
-	Password string `json: "Password"`
-	DOB string `json: "DOB"`
-	Gender string `json: "Gender"`
+	Id string
+	FirstName string
+	LastName string
+	Email string
+	Password string
+	DOB string
+	Gender string
 }
 
-// User "database"
-var Users []User
 
+type Users []User
+
+// usersDB represents the users database that contains all users that are able to login.
+var usersDB Users
+
+var lastUserId int
+
+func (users Users) getUser(e string) (User, error) {
+	for _, user := range users {
+		if user.Email == e {
+			return user, nil
+		}
+	}
+
+	var u User
+	return u, errors.New("Email does not exist")
+}
 
 func allUsers(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: allUsers")
-	json.NewEncoder(w).Encode(Users)
+	if err:= json.NewEncoder(w).Encode(usersDB); err != nil {
+		fmt.Println("Error encoding usersDB")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 }
 
-
-func isValidSignUpEntry(u User) bool {
-	if u.Id == "" || u.FirstName == "" || u.LastName == "" || u.Email == "" || u.Password == "" || u.DOB == "" || u.Gender == "" {
+func (u User) isValidSignUpEntry() bool {
+	if u.FirstName == "" || u.LastName == "" || u.Email == "" || u.Password == "" || u.DOB == "" || u.Gender == "" {
 		return false
 	}
 
 	return true
-}
-
-
-func emailExist(e string) bool {
-	for _, u := range Users {
-		if (u.Email == e) {
-			return true
-		}
-	}
-
-	return false
 }
 
 func signupUser(w http.ResponseWriter, r *http.Request){
@@ -61,42 +68,46 @@ func signupUser(w http.ResponseWriter, r *http.Request){
 	}
 	var user User
 	json.Unmarshal(reqBody, &user)
+	user.Id = strconv.Itoa(lastUserId + 1)
+	lastUserId += 1
 
 	
-	// check for empty fields
-	if !isValidSignUpEntry(user) {
+	// isValidSignUpEntry validates the fields of user to make sure there is no empty field(s).
+	if !user.isValidSignUpEntry() {
 		fmt.Println("One or more field(s) is empty")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	
-	//check if the email address already exist
-	if emailExist(user.Email) {
+	// If the email already exist within our database, return an error.
+	if _, err := usersDB.getUser(user.Email); err == nil {
 		fmt.Println("Email already exists")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	
 
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 8)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 8)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	user.Password = string(hashedPassword)
-	Users = append(Users,user)
+	usersDB = append(usersDB,user)
 	json.NewEncoder(w).Encode(user)
 	
 		
 }
 
-
-func isValidLoginEntry(u User) bool {
+func (u User) isValidLoginEntry() bool {
 	if u.Email == "" || u.Password == "" {
 		return false
 	}
 	return true
 }
 
-
-func userLogin(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Endpoint: userLogin")
+func loginUser(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Endpoint: loginUser")
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -105,52 +116,62 @@ func userLogin(w http.ResponseWriter, r *http.Request) {
 	var user User
 	json.Unmarshal(reqBody, &user)
 
-	if !isValidLoginEntry(user){
+	if !user.isValidLoginEntry() {
 		fmt.Println("Email or password field is empty")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	if !emailExist(user.Email) {
+	userFromStore, err := usersDB.getUser(user.Email)
+	if err != nil {
 		fmt.Println("User account does not exist")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
-	}
-
-	var userFromStore User
-	for _, u := range Users {
-		if user.Email == u.Email {
-			userFromStore = u
-		}
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(userFromStore.Password), []byte(user.Password)); err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
+
+	json.NewEncoder(w).Encode(userFromStore)
 }
 
-
-
-//Employee code part below
 
 type Employee struct {
-	Id string `json: "Id"` 
-	FirstName string `json: "FirstName"`
-	LastName string `json: "LastName"`
-	DOB string `json: "DOB"`
-	Title string `json: "Title"`
-	Salary string `json: "Salary"`
-	Gender string `json: "Gender"`
+	Id string
+	FirstName string
+	LastName string
+	DOB string
+	Title string
+	Salary string
+	Gender string
 }
 
-// Employee "database"
-var Employees []Employee
+type Employees []Employee
+
+// employeeDB represents the employee database that contains all employee.
+var employeeDB Employees
+
+var lastEmployeeId int
+
+func (employees Employees) getEmployee(id string) (Employee, error) {
+		for _, employee := range employees {
+		if employee.Id == id {
+			return employee, nil
+		}
+	}
+
+	var e Employee
+	return e, errors.New("Employee does not exist")
+}
 
 
 func allEmployees(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: allEmployees")
-	json.NewEncoder(w).Encode(Employees)
+	if err:= json.NewEncoder(w).Encode(employeeDB); err != nil {
+		fmt.Println("Error encoding employeeDB")
+	}
 }
 
 
@@ -159,16 +180,19 @@ func singleEmployee(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
 	id := vars["id"]
 	
-	for _, employee := range Employees {
-		if employee.Id == id {
-			json.NewEncoder(w).Encode(employee)
-		}
+    employeeFromStore, err := employeeDB.getEmployee(id)
+	if err != nil {
+		fmt.Println("Employee does not exist")
+		w.WriteHeader(http.StatusUnauthorized)
+		return
 	}
+	
+	json.NewEncoder(w).Encode(employeeFromStore)
 }
 
 
-func isValidCreateEntry(e Employee) bool {
-	if e.Id == "" || e.FirstName == "" || e.LastName == "" || e.DOB == "" || e.Title == "" || e.Salary == "" || e.Gender == "" {
+func (e Employee) isValidCreateEntry() bool {
+	if e.FirstName == "" || e.LastName == "" || e.DOB == "" || e.Title == "" || e.Salary == "" || e.Gender == "" {
 		return false
 	}
 	return true
@@ -183,28 +207,20 @@ func createEmployee(w http.ResponseWriter, r *http.Request){
 	}
 	var employee Employee
 	json.Unmarshal(reqBody, &employee)
+	employee.Id = strconv.Itoa(lastEmployeeId + 1)
+	lastEmployeeId += 1
 
 	// check for empty fields
-	if !isValidCreateEntry(employee) {
+	if !employee.isValidCreateEntry() {
 		fmt.Println("One or more field(s) is empty")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	Employees = append(Employees, employee)
+	employeeDB = append(employeeDB, employee)
 	json.NewEncoder(w).Encode(employee)
 }
 
-
-func employeeExist(id string) bool {
-	for _, employee := range Employees {
-		if id == employee.Id {
-			return true
-		}
-	}
-
-	return false
-}
 
 
 func updateEmployee(w http.ResponseWriter, r *http.Request){
@@ -217,15 +233,17 @@ func updateEmployee(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	if !employeeExist(id) {
+  _, error := employeeDB.getEmployee(id)
+	
+	if error != nil {
 		fmt.Println("Employee does not exist")
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
-	for idx, employee := range Employees {
+	for idx, employee := range employeeDB {
 		if employee.Id == id {
-			json.Unmarshal(reqBody, &Employees[idx])
+			json.Unmarshal(reqBody, &employeeDB[idx])
 		}
 	}
 }
@@ -235,23 +253,29 @@ func deleteEmployee(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
 	id := vars["id"]
 
-	for idx, employee := range Employees {
+    _, err := employeeDB.getEmployee(id)
+	
+	if err != nil {
+		fmt.Println("Employee does not exist")
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	
+	for idx, employee := range employeeDB {
 		if employee.Id == id {
-			Employees = append(Employees[:idx], Employees[idx+1:]...)
+			employeeDB = append(employeeDB[:idx], employeeDB[idx+1:]...)
 			break
 		}
 	}
 }
 
 func handleRequests(){
-	// creates instance of mux router
 	myRouter := mux.NewRouter().StrictSlash(true)
 
-	// router mapping
+	// myRouter handles where the requests will be routed.
 	myRouter.HandleFunc("/signup", signupUser).Methods("POST")
-	myRouter.HandleFunc("/login", userLogin).Methods("POST")
+	myRouter.HandleFunc("/login", loginUser).Methods("POST")
 
-	//myRouter.HandleFunc("/credentials", allCredentials).Methods("GET")
 	myRouter.HandleFunc("/users", allUsers).Methods("GET")
 
 	myRouter.HandleFunc("/employees", allEmployees).Methods("GET")
@@ -264,14 +288,16 @@ func handleRequests(){
 }
 
 func main(){
-	Employees = []Employee{
+	lastUserId = 0
+	
+	
+	employeeDB = Employees{
 		{"1", "John", "Doe", "1/1/1111", "50000", "Software Engineer", "Male"},
 		{"2", "Jane", "Doe", "2/2/2222", "100000", "Software Engineer", "Female"},
 		{"3", "Test", "User", "2/2/2222", "100000", "Software Engineer", "Male"},
 	}
 	
-	Users = []User{
-		{"1", "admin", "admin", "admin@eldertree.biz", "admin", "0/0/0000", "Male"},
-	}
+	lastEmployeeId = 3
+	
 	handleRequests()
 }
