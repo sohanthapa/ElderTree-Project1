@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -56,16 +56,6 @@ export default function EmployeeTable(props) {
    } = props;
 
    const classes = useStyles();
-   //const [editModalVisible, setEditModalVisible] = useState(false);
-
-   // single employee data
-   const [id, setId] = useState();
-   const [fName, setfName] = useState();
-   const [lName, setlName] = useState();
-   const [birthDate, setBirthDate] = useState();
-   const [salary, setSalary] = useState();
-   const [jobTitle, setJobTitle] = useState();
-   const [gender, setGender] = useState();
 
    const onGetEmployeesSuccess = response => {
       console.log('success');
@@ -106,15 +96,6 @@ export default function EmployeeTable(props) {
       console.log(employeeId);
    };
 
-   const onEditEmployeeSuccess = response => {
-      console.log('Employee Information Updated');
-   };
-
-   const onEditEmployeeError = error => {
-      console.log('Cannot Update Employee Information', error.response);
-   };
-
-   // Test - change to modal
    const handleEdit = employeeId => {
       toggleEditModalVisibility();
 

@@ -108,21 +108,19 @@ const useStyles = makeStyles(theme => ({
 
 export default function Dashboard() {
    const classes = useStyles();
-   const [open, setOpen] = useState(true);
-
+   const [drawerIsOpen, setDrawerOpen] = useState(true);
    const [addModalVisible, setAddModalVisible] = useState(false);
    const [editModalVisible, setEditModalVisible] = useState(false);
-
-   // single employee data
-   const [id, setId] = useState();
-   const [fName, setfName] = useState();
-   const [lName, setlName] = useState();
-   const [birthDate, setBirthDate] = useState();
-   const [salary, setSalary] = useState();
-   const [jobTitle, setJobTitle] = useState();
-   const [gender, setGender] = useState();
    const [employees, setEmployees] = useState([]);
-   const [employee, setEmployee] = useState({});
+   const [employee, setEmployee] = useState({
+      Id: '200',
+      FirstName: null,
+      LastName: null,
+      DOB: null,
+      Salary: null,
+      Title: null,
+      Gender: null
+   });
 
    const concatinateName = employee => {
       // eslint-disable-next-line no-param-reassign
@@ -148,7 +146,6 @@ export default function Dashboard() {
    };
 
    const toggleAddModalVisibility = () => {
-      console.log('in');
       if (addModalVisible) {
          setAddModalVisible(false);
       } else {
@@ -164,42 +161,24 @@ export default function Dashboard() {
    };
 
    const handleInputChange = event => {
-      console.log(event.target.value);
-      let newEmployee = null;
       switch (event.target.id) {
          case 'firstName':
-            setfName(event.target.value);
-            newEmployee = { ...employee, FirstName: event.target.value };
-            setEmployee(newEmployee);
+            setEmployee({ ...employee, FirstName: event.target.value });
             break;
          case 'lastName':
-            setlName(event.target.value);
-            newEmployee = { ...employee, LastName: event.target.value };
-            setEmployee(newEmployee);
+            setEmployee({ ...employee, LastName: event.target.value });
             break;
          case 'birthDate':
-            setBirthDate(event.target.value);
-            newEmployee = { ...employee, DOB: event.target.value };
-            setEmployee(newEmployee);
-
+            setEmployee({ ...employee, DOB: event.target.value });
             break;
          case 'salary':
-            setSalary(event.target.value);
-            newEmployee = { ...employee, Salary: event.target.value };
-            setEmployee(newEmployee);
-
+            setEmployee({ ...employee, Salary: event.target.value });
             break;
          case 'jobTitle':
-            setJobTitle(event.target.value);
-            newEmployee = { ...employee, Title: event.target.value };
-            setEmployee(newEmployee);
-
+            setEmployee({ ...employee, Title: event.target.value });
             break;
          case 'gender':
-            setGender(event.target.value);
-            newEmployee = { ...employee, Gender: event.target.value };
-            setEmployee(newEmployee);
-
+            setEmployee({ ...employee, Gender: event.target.value });
             break;
          default:
             break;
@@ -215,18 +194,18 @@ export default function Dashboard() {
    };
 
    const handleNewEmployeeSubmission = () => {
-      const employeeData = {
-         Id: '0',
-         FirstName: `${fName}`,
-         LastName: `${lName}`,
-         DOB: `${birthDate}`,
-         Salary: `${salary}`,
-         Title: `${jobTitle}`,
-         Gender: `${gender}`
-      };
-      console.log('employee data', employeeData);
+      // const employeeData = {
+      //    Id: '0',
+      //    FirstName: `${fName}`,
+      //    LastName: `${lName}`,
+      //    DOB: `${birthDate}`,
+      //    Salary: `${salary}`,
+      //    Title: `${jobTitle}`,
+      //    Gender: `${gender}`
+      // };
+      console.log('employee data', employee);
       EmployeeService.Insert(
-         employeeData,
+         employee,
          onEmployeeSubmitSuccess,
          onEmployeeSubmitError
       );
@@ -247,10 +226,10 @@ export default function Dashboard() {
    };
 
    const toggleDrawerState = () => {
-      if (open) {
-         setOpen(false);
+      if (drawerIsOpen) {
+         setDrawerOpen(false);
       } else {
-         setOpen(true);
+         setDrawerOpen(true);
       }
    };
 
@@ -259,7 +238,10 @@ export default function Dashboard() {
          <CssBaseline />
          <AppBar
             position="absolute"
-            className={clsx(classes.appBar, open && classes.appBarShift)}
+            className={clsx(
+               classes.appBar,
+               drawerIsOpen && classes.appBarShift
+            )}
          >
             <Toolbar className={classes.toolbar}>
                <IconButton
@@ -269,7 +251,7 @@ export default function Dashboard() {
                   onClick={toggleDrawerState}
                   className={clsx(
                      classes.menuButton,
-                     open && classes.menuButtonHidden
+                     drawerIsOpen && classes.menuButtonHidden
                   )}
                >
                   <MenuIcon />
@@ -290,10 +272,10 @@ export default function Dashboard() {
             classes={{
                paper: clsx(
                   classes.drawerPaper,
-                  !open && classes.drawerPaperClose
+                  !drawerIsOpen && classes.drawerPaperClose
                )
             }}
-            open={open}
+            open={drawerIsOpen}
          >
             <div className={classes.toolbarIcon}>
                <IconButton onClick={toggleDrawerState}>
