@@ -124,6 +124,7 @@ export default function Dashboard() {
 
   const concatinateName = (employee) => {
     // eslint-disable-next-line no-param-reassign
+    console.log(employee.FirstName);
     employee.Employee = employee.FirstName.concat(' ', employee.LastName);
     return employee;
   };

@@ -74,10 +74,23 @@ class SignUp extends Component {
      // }
    };
 
+   onUserSignUpSuccess = (response) => {
+     // eslint-disable-next-line no-console
+     if (response.status === 200) {
+     this.props.userHasAuthenticated(true);
+     this.props.history.push("/dashboard");
+     }
+   };
+
+  onUserSignupError = (response) => {
+    // eslint-disable-next-line no-console
+    console.log('test', response.status); 
+    console.log('error', response);   
+  };
+
    handleSubmit = async (event) => {
      // Destructure
      const { email, password } = this.state;
-     const { history } = this.props;
      event.preventDefault();
 
      const userSignUp = {
@@ -95,8 +108,6 @@ class SignUp extends Component {
        this.onUserSignUpSuccess,
        this.onUSerSignupError,
      );
-     history.push('/');
-
      // eslint-disable-next-line no-alert
      
      // try {
@@ -120,15 +131,7 @@ class SignUp extends Component {
      });
    };
 
-   onUserSignUpSuccess = (response) => {
-     // eslint-disable-next-line no-console
-     console.log('success', response);
-   };
-
-   onUserSignupError = (response) => {
-     // eslint-disable-next-line no-console
-     console.log('error', response);
-   };
+   
 
    validateForm() {
      const { email, password, confirmPassword } = this.state;

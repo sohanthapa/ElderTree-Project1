@@ -13,6 +13,7 @@ import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/styles';
 import LogInButton from './LogInButton';
+import UserService from '../../UserService'
 
 const styles = theme => ({
   '@global': {
@@ -50,17 +51,39 @@ class Login extends Component {
     };
   }
 
-   handleChange = (event) => {
+   handleChange = async (event) => {
      this.setState({
        [event.target.id]: event.target.value,
      });
    };
 
+ 
+
+   onUserLogInSuccess = (response) => {
+    // eslint-disable-next-line no-console
+    console.log("test");
+    this.props.history.push("/dashboard");
+
+  };
+
+   
    handleSubmit = async (event) => {
+     const { email, password } = this.state;
      event.preventDefault();
 
      this.setState({ isLoading: true });
-     this.props.history.push('/dashboard');
+
+     const logInCredentials = {
+      Email: email,
+      Password: password
+    }
+
+     UserService.LogIn(
+      logInCredentials,
+      this.onUserLogInSuccess,
+      this.onUSerLogInError,
+    );
+    
      // try {
      //    await Auth.signIn(this.state.email, this.state.password);
      //    this.props.userHasAuthenticated(true);
@@ -69,6 +92,9 @@ class Login extends Component {
      //    alert(e.message);
      //    this.setState({ isLoading: false });
      // }
+     this.props.history.push("/dashboard");
+     this.props.userHasAuthenticated(true);
+     this.setState({ isLoading: false });
    };
 
    validateForm() {
