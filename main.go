@@ -50,6 +50,8 @@ func emailExist(e string) bool {
 	return false
 }
 
+var lastUserId int = 1
+
 func signupUser(w http.ResponseWriter, r *http.Request){
 	fmt.Println("Endpoint: signupUser")
 	reqBody, err := ioutil.ReadAll(r.Body)
@@ -59,6 +61,8 @@ func signupUser(w http.ResponseWriter, r *http.Request){
 	}
 	var user User
 	json.Unmarshal(reqBody, &user)
+	user.Id = string(lastUserId + 1)
+	lastUserId += 1
 
 	
 	// check for empty fields
@@ -135,8 +139,9 @@ func loginUser(w http.ResponseWriter, r *http.Request) {
 }
 
 
-
 //Employee code part below
+
+var lastEmployeeId int = 3
 
 type Employee struct {
 	Id string
@@ -187,6 +192,8 @@ func createEmployee(w http.ResponseWriter, r *http.Request){
 	}
 	var employee Employee
 	json.Unmarshal(reqBody, &employee)
+	employee.Id = string(lastEmployeeId + 1)
+	lastEmployeeId += 1
 
 	// check for empty fields
 	if !isValidCreateEntry(employee) {
