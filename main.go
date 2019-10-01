@@ -5,22 +5,20 @@ import (
 	"log"
 	"net/http"
 	"encoding/json"
-	// install: go get github.com/gorilla/mux
 	"github.com/gorilla/mux"
-	"io/ioutil"
-	// install: go get golang.org/x/crypto/bcrypt
+	"io/ioutil" 
 	"golang.org/x/crypto/bcrypt"
 )
 
 
 type User struct {
-	Id string `json: "Id"`
-	FirstName string `json: "FirstName"`
-	LastName string `json: "LastName"`
-	Email string `json: "Email"`
-	Password string `json: "Password"`
-	DOB string `json: "DOB"`
-	Gender string `json: "Gender"`
+	Id string
+	FirstName string
+	LastName string
+	Email string
+	Password string
+	DOB string
+	Gender string
 }
 
 // User "database"
@@ -78,7 +76,11 @@ func signupUser(w http.ResponseWriter, r *http.Request){
 	}
 	
 
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 8)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 8)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	user.Password = string(hashedPassword)
 	Users = append(Users,user)
 	json.NewEncoder(w).Encode(user)
@@ -128,6 +130,8 @@ func loginUser(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
+
+	json.NewEncoder(w).Encode(userFromStore)
 }
 
 
@@ -135,13 +139,13 @@ func loginUser(w http.ResponseWriter, r *http.Request) {
 //Employee code part below
 
 type Employee struct {
-	Id string `json: "Id"` 
-	FirstName string `json: "FirstName"`
-	LastName string `json: "LastName"`
-	DOB string `json: "DOB"`
-	Title string `json: "Title"`
-	Salary string `json: "Salary"`
-	Gender string `json: "Gender"`
+	Id string
+	FirstName string
+	LastName string
+	DOB string
+	Title string
+	Salary string
+	Gender string
 }
 
 // Employee "database"
@@ -218,7 +222,7 @@ func updateEmployee(w http.ResponseWriter, r *http.Request){
 	}
 
 	if !employeeExist(id) {
-		fmt.Println("Employee does not exist")
+		fmt.Println("Cannot update, Employee does not exist")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -235,6 +239,12 @@ func deleteEmployee(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
 	id := vars["id"]
 
+	if !employeeExist(id) {
+		fmt.Println("ERROR: Cannot delete, Employee does not exist")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	
 	for idx, employee := range Employees {
 		if employee.Id == id {
 			Employees = append(Employees[:idx], Employees[idx+1:]...)

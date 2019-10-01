@@ -6,9 +6,10 @@ import (
     "testing"
 	"encoding/json"
 	"bytes"
-
+	"fmt"
     "github.com/gorilla/mux"
-    "github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func Router() *mux.Router {
@@ -16,6 +17,8 @@ func Router() *mux.Router {
 	router.HandleFunc("/employee", createEmployee).Methods("POST")
 	router.HandleFunc("/signup", signupUser).Methods("POST")
 	router.HandleFunc("/login", loginUser).Methods("POST")
+	router.HandleFunc("/employee/{id}", updateEmployee).Methods("PUT")
+	router.HandleFunc("/employee/{id}", deleteEmployee).Methods("DELETE")
     return router
 }
 
@@ -62,10 +65,30 @@ func TestSignUpUser(t *testing.T){
 	
 	for	idx, user := range input {
 		jsonUser, _ := json.Marshal(user)
-    	request, _ := http.NewRequest("POST", "/signup", bytes.NewBuffer(jsonUser))
+		request, err := http.NewRequest("POST", "/signup", bytes.NewBuffer(jsonUser))
+		if err != nil {
+			t.Errorf("Sign up - Error making POST request")
+			return
+		}
     	response := httptest.NewRecorder()
     	Router().ServeHTTP(response, request)
-    	assert.Equal(t, expected[idx].Code, response.Code, expected[idx].Message)
+		assert.Equal(t, expected[idx].Code, response.Code, expected[idx].Message)
+
+		//checking for response body
+		if response.Code == 200 {
+			var u User
+			json.Unmarshal(response.Body.Bytes(), &u)
+		
+			// check if correct password
+			if err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(user.Password)); err != nil {
+				t.Errorf("Different passwords")
+				return
+			}
+
+			// set password to encrypted password if it is correct
+			user.Password = u.Password
+			assert.Equal(t, u, user, "Response body differs")
+		}
 	}
 }
 
@@ -82,7 +105,7 @@ func TestLoginUser (t *testing.T) {
 			Gender: "Male",
 		}, 
 		{
-			Id: "1",
+			Id: "2",
 			FirstName: "admin",
 			LastName: "admin",
 			Email: "admin@eldertree.biz",
@@ -91,7 +114,7 @@ func TestLoginUser (t *testing.T) {
 			Gender: "Male",
 		},
 		{
-			Id: "1",
+			Id: "3",
 			FirstName: "admin",
 			LastName: "admin",
 			Email: "abc@eldertree.biz",
@@ -113,29 +136,162 @@ func TestLoginUser (t *testing.T) {
 
 	for	idx, user := range input {
 		jsonUser, _ := json.Marshal(user)
-    	request, _ := http.NewRequest("POST", "/login", bytes.NewBuffer(jsonUser))
+		request, err := http.NewRequest("POST", "/login", bytes.NewBuffer(jsonUser))
+		if err != nil {
+			t.Errorf("Login - Error making POST request")
+			return
+		}
     	response := httptest.NewRecorder()
     	Router().ServeHTTP(response, request)
-    	assert.Equal(t, expected[idx].Code, response.Code, expected[idx].Message)
+		assert.Equal(t, expected[idx].Code, response.Code, expected[idx].Message)
+
+		//checking for response body
+		if response.Code == 200 {
+			var u User
+			json.Unmarshal(response.Body.Bytes(), &u)
+		
+			// check if correct password
+			if err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(user.Password)); err != nil {
+				t.Errorf("Different passwords %v - %v", u.Password, user.Password)
+				return
+			}
+
+			// set password to encrypted password if it is correct
+			user.Password = u.Password
+			assert.Equal(t, u, user, "Response body differs")
+		}
 	}
 }
 
 
 func TestCreateEmployee (t *testing.T) {
+	input := []Employee{
+		{
+			Id:	"1", 
+			FirstName:	"Sohan", 
+			LastName:	"Thapa", 
+			DOB:		"1/1/1111", 
+			Salary:		"50000", 
+			Title:		"Software Engineer", 
+			Gender:		"Male",
+		},
+	
+		{
+			Id:	"2", 
+			FirstName:	"Sohan", 
+			LastName:	"Thapa", 
+			DOB:		"", 
+			Salary:		"50000", 
+			Title:		"Software Engineer", 
+			Gender:		"Male",
+		},
+	}
+	
+	expected := []struct{
+		Code int
+		Message string
+		
+	} {
+		{200, "OK Response is expected"},
+		{400, "Bad Error Request is expected"},
+	}
+		
+	for	idx, employee := range input {
+		jsonEmployee, _ := json.Marshal(employee)
+		request, err := http.NewRequest("POST", "/employee", bytes.NewBuffer(jsonEmployee))
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		response := httptest.NewRecorder()
+		Router().ServeHTTP(response, request)
+    	assert.Equal(t, expected[idx].Code, response.Code, expected[idx].Message)
+		
+		//checking for response body
+		if response.Code == 200 {
+			expected := string(`{"Id":"1","FirstName":"Sohan","LastName":"Thapa","DOB":"1/1/1111","Title":"Software Engineer","Salary":"50000","Gender":"Male"}`)
+			assert.JSONEq(t, expected, response.Body.String(), "Response body differs")
+		}
+	}
+}
+
+func TestUpdateEmployee(t *testing.T) {
+
 	employee := &Employee{
-		Id:	"1", 
-		FirstName:	"John", 
-		LastName:	"Doe", 
-		DOB:		"1/1/1111", 
-		Salary:		"50000", 
-		Title:		"Software Engineer", 
-		Gender:		"Male",
+			Id:	"1", 
+			FirstName:	"Sohan", 
+			LastName:	"Thapa", 
+			DOB:		"2/2/2222", 
+			Salary:		"50000", 
+			Title:		"Software Engineer", 
+			Gender:		"Male",
+	}
+	
+		jsonEmployee, _ := json.Marshal(employee)
+		correctRequest, err := http.NewRequest("PUT", "/employee/1", bytes.NewBuffer(jsonEmployee))		
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		response := httptest.NewRecorder()
+		Router().ServeHTTP(response, correctRequest)
+    	assert.Equal(t, 200, response.Code, "OK Response is expected")
+		badRequest, err := http.NewRequest("PUT", "/employee/8", bytes.NewBuffer(jsonEmployee) )
+		if err != nil {
+			fmt.Println(err)
+			return
 		}
 		
-	jsonEmployee, _ := json.Marshal(employee)
-    request, _ := http.NewRequest("POST", "/employee", bytes.NewBuffer(jsonEmployee))
-    response := httptest.NewRecorder()
-    Router().ServeHTTP(response, request)
-    assert.Equal(t, 200, response.Code, "OK response is expected")
+		Router().ServeHTTP(response, badRequest)
+		assert.Equal(t, 400, response.Code, "Bad Error Request is expected")
+	
 	
 }
+
+
+func TestDeleteEmployee (t *testing.T) {
+
+		employee := &Employee{
+				Id:	"1", 
+				FirstName:	"Sohan", 
+				LastName:	"Thapa", 
+				DOB:		"2/2/2222", 
+				Salary:		"50000", 
+				Title:		"Software Engineer", 
+				Gender:		"Male",
+		}
+		
+		//Creating an employee first
+		jsonEmployee, _ := json.Marshal(employee)
+		request, err := http.NewRequest("POST", "/employee", bytes.NewBuffer(jsonEmployee))
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		postResponse := httptest.NewRecorder()
+		Router().ServeHTTP(postResponse, request)
+    	assert.Equal(t, 200, postResponse.Code, "OK Response is expected")
+		
+		//Deleting the above created employee
+		deleteResponse := httptest.NewRecorder()
+		correctRequest, err := http.NewRequest("DELETE", "/employee/1", nil)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		Router().ServeHTTP(deleteResponse, correctRequest)
+		assert.Equal(t, 200, deleteResponse.Code, "OK Response is expected")
+		
+		badRequest, err := http.NewRequest("DELETE", "/employee/8", nil)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+ 
+		Router().ServeHTTP(deleteResponse, badRequest)
+		assert.Equal(t, 400, deleteResponse.Code, "Bad Error Request is expected")
+}
+
+
+
